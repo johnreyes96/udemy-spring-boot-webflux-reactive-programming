@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.bolsadeideas.springboot.reactor.app.models.Usuario;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @SpringBootApplication
 public class SpringBootReactorApplication implements CommandLineRunner {
@@ -24,6 +25,36 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		ejemploFlatMap();
+	}
+
+	private void ejemploFlatMap() {
+		List<String> nombresList = new ArrayList<>();
+		nombresList.add("Andres Guzman");
+		nombresList.add("Pedro Jimenez");
+		nombresList.add("Maria Sulivan");
+		nombresList.add("Diego Jaramillo");
+		nombresList.add("Juan Ramirez");
+		nombresList.add("Bruce Lee");
+		nombresList.add("Bruce Willis");
+		
+		Flux.fromIterable(nombresList)
+				.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase()))
+				.flatMap(usuario -> {
+					if ("bruce".equalsIgnoreCase(usuario.getNombre())) {
+						return Mono.just(usuario);
+					}
+					return Mono.empty();
+				})
+				.map(usuario -> {
+					String nombre = usuario.getNombre().toLowerCase();
+					usuario.setNombre(nombre);
+					return usuario;
+				})
+				.subscribe(usuario -> logger.info(usuario.toString()));
+	}
+
+	private void ejemploIterable() {
 		List<String> nombresList = new ArrayList<>();
 		nombresList.add("Andres Guzman");
 		nombresList.add("Pedro Jimenez");
