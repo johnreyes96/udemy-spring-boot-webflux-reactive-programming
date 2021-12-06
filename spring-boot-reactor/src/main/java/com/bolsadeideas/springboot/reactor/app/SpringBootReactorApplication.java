@@ -9,7 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.bolsadeideas.springboot.reactor.app.models.Comentarios;
 import com.bolsadeideas.springboot.reactor.app.models.Usuario;
+import com.bolsadeideas.springboot.reactor.app.models.UsuarioComentarios;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -25,7 +27,21 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ejemploCollectList();
+		ejemploUsuarioComentariosFlatMap();
+	}
+
+	private void ejemploUsuarioComentariosFlatMap() {
+		Mono<Usuario> usuarioMono = Mono.fromCallable(() -> new Usuario("John", "Reyes"));
+		Mono<Comentarios> comentariosUsuarioMono = Mono.fromCallable(() -> {
+			Comentarios comentarios = new Comentarios();
+			comentarios.addComentario("Hola pepe, qué tal!");
+			comentarios.addComentario("Mañana voy para la playa!");
+			comentarios.addComentario("Estoy tomando el curso de spring con reactor");
+			return comentarios;
+		});
+		
+		usuarioMono.flatMap(usuario -> comentariosUsuarioMono.map(comentario -> new UsuarioComentarios(usuario, comentario)))
+				.subscribe(usuarioComentario -> logger.info(usuarioComentario.toString()));
 	}
 
 	private void ejemploCollectList() {
