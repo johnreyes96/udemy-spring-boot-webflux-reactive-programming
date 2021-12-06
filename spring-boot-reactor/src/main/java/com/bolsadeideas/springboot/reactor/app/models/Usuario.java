@@ -2,8 +2,8 @@ package com.bolsadeideas.springboot.reactor.app.models;
 
 public class Usuario {
 	
-	public String nombre;
-	public String apellido;
+	private String nombre;
+	private String apellido;
 	
 	public Usuario(String nombre, String apellido) {
 		this.nombre = nombre;
@@ -22,4 +22,10 @@ public class Usuario {
 	public void setApellido(String apellido) {
 		this.apellido = apellido;
 	}
+
+	@Override
+	public String toString() {
+		return "Usuario [nombre=" + nombre + ", apellido=" + apellido + "]";
+	}
+	
 }
