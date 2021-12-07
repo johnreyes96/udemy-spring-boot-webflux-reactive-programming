@@ -48,12 +48,19 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 						timer.cancel();
 						emitter.complete();
 					}
+					
+					if (contador == 5) {
+						timer.cancel();
+						emitter.error(new InterruptedException("Error, se ha detenido el flux en 5!"));
+					}
 				}
 			}, 1000, 1000);
 		})
-		.doOnNext(contador -> logger.info(contador.toString()))
-		.doOnTerminate(() -> logger.info("Hemos terminado"))
-		.subscribe();
+		.subscribe(
+				contador -> logger.info(contador.toString()),
+				error -> logger.error(error.getMessage()),
+				() -> logger.info("Hemos terminado")
+		);
 	}
 
 	private void ejemploIntervalInfinito() throws InterruptedException {
