@@ -35,8 +35,7 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 		Flux<Integer> rangos = Flux.range(1, 12)
 				.delayElements(Duration.ofSeconds(1))
 				.doOnNext(elemento -> logger.info(elemento.toString()));
-		rangos.subscribe();
-		Thread.sleep(13000);
+		rangos.blockLast();
 	}
 
 	private void ejemploInterval() {
