@@ -3,6 +3,8 @@ package com.bolsadeideas.springboot.reactor.app;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
@@ -29,7 +31,29 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ejemploIntervalInfinito();
+		ejemploIntervalDesdeCreate();
+	}
+
+	private void ejemploIntervalDesdeCreate() {
+		Flux.create(emitter -> {
+			Timer timer = new Timer();
+			timer.schedule(new TimerTask() {
+				
+				private Integer contador = 0;
+				
+				@Override
+				public void run() {
+					emitter.next(++contador);
+					if (contador == 10) {
+						timer.cancel();
+						emitter.complete();
+					}
+				}
+			}, 1000, 1000);
+		})
+		.doOnNext(contador -> logger.info(contador.toString()))
+		.doOnTerminate(() -> logger.info("Hemos terminado"))
+		.subscribe();
 	}
 
 	private void ejemploIntervalInfinito() throws InterruptedException {
