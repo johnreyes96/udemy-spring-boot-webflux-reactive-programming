@@ -1,5 +1,6 @@
 package com.bolsadeideas.springboot.reactor.app;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +28,31 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		ejemploZipWithRangos();
+		ejemploDelayElements();
+	}
+
+	private void ejemploDelayElements() throws InterruptedException {
+		Flux<Integer> rangos = Flux.range(1, 12)
+				.delayElements(Duration.ofSeconds(1))
+				.doOnNext(elemento -> logger.info(elemento.toString()));
+		rangos.subscribe();
+		Thread.sleep(13000);
+	}
+
+	private void ejemploInterval() {
+		Flux<Integer> rangos = Flux.range(1, 12);
+		Flux<Long> retraso = Flux.interval(Duration.ofSeconds(1));
+		rangos.zipWith(retraso, (rango, re) -> rango)
+				.doOnNext(elemento -> logger.info(elemento.toString()))
+				.blockLast();
 	}
 
 	private void ejemploZipWithRangos() {
 		Flux<Integer> rangos = Flux.range(1, 5);
 		Flux.just(1, 2, 3, 4)
-			.map(elemento -> (elemento * 2))
-			.zipWith(rangos, (uno, dos) -> String.format("Primer Flux %d, Segundo Flux %d", uno, dos))
-			.subscribe(texto -> logger.info(texto));
+				.map(elemento -> (elemento * 2))
+				.zipWith(rangos, (uno, dos) -> String.format("Primer Flux %d, Segundo Flux %d", uno, dos))
+				.subscribe(texto -> logger.info(texto));
 	}
 
 	private void ejemploUsuarioComentariosZipWithForma2() {
