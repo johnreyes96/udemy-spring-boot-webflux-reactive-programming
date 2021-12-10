@@ -36,6 +36,11 @@ public class ProductoRestController {
 	
 	@GetMapping("/{id}")
 	public Mono<Producto> show(@PathVariable String id) {
-		return productoDao.findById(id);
+		Flux<Producto> productos = productoDao.findAll();
+		Mono<Producto> productoMono = productos
+				.filter(producto -> producto.getId().equals(id))
+				.next()
+				.doOnNext(producto -> logger.info(producto.getNombre()));
+		return productoMono;
 	}
 }
