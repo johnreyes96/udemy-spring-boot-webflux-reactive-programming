@@ -30,6 +30,9 @@ public class ProductoController {
 	
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<Producto>> ver(@PathVariable String id) {
-		return service.findById(id).map(producto -> ResponseEntity.ok(producto));
+		return service.findById(id).map(producto -> ResponseEntity.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(producto))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 }
