@@ -1,5 +1,7 @@
 package com.bolsadeideas.springboot.webflux.app.controllers;
 
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,19 @@ public class ProductoController {
 					producto.setNombre(producto.getNombre().toUpperCase());
 					return producto;
 				});
+		productos.subscribe(producto -> logger.info(producto.getNombre()));
+		model.addAttribute("productos", productos);
+		model.addAttribute("titulo", "Listado de productos");
+		return "listar";
+	}
+	
+	@GetMapping("/listar-datadriver")
+	public String listarDataDriver(Model model) {
+		Flux<Producto> productos = productoDao.findAll()
+				.map(producto -> {
+					producto.setNombre(producto.getNombre().toUpperCase());
+					return producto;
+				}).delayElements(Duration.ofSeconds(1));
 		productos.subscribe(producto -> logger.info(producto.getNombre()));
 		model.addAttribute("productos", productos);
 		model.addAttribute("titulo", "Listado de productos");
