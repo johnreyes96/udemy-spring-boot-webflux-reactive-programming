@@ -22,4 +22,13 @@ public class ProductoHandler {
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(service.findAll(), Producto.class);
 	}
+
+	public Mono<ServerResponse> ver(ServerRequest request) {
+		String id = request.pathVariable("id");
+		return service.findById(id).flatMap(producto -> ServerResponse
+				.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(producto)
+				.switchIfEmpty(ServerResponse.notFound().build()));
+	}
 }
