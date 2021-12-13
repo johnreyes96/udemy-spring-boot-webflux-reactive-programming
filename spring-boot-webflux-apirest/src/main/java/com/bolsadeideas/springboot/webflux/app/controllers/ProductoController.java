@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,5 +52,18 @@ public class ProductoController {
 				.created(URI.create("/api/productos/".concat(product.getId())))
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(product));
+	}
+	
+	@PutMapping("/{id}")
+	public Mono<ResponseEntity<Producto>> editar(@RequestBody Producto producto, @PathVariable String id) {
+		return service.findById(id).flatMap(product -> {
+			product.setNombre(producto.getNombre());
+			product.setPrecio(producto.getPrecio());
+			product.setCategoria(producto.getCategoria());
+			return service.save(product);
+		}).map(product -> ResponseEntity.created(URI.create("/api/productos/".concat(product.getId())))
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(product))
+		.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 }
