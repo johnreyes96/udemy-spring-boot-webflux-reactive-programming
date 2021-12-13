@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -69,9 +70,9 @@ public class ProductoController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public Mono<ResponseEntity<Object>> eliminar(@PathVariable String id) {
+	public Mono<ResponseEntity<Void>> eliminar(@PathVariable String id) {
 		return service.findById(id).flatMap(product -> {
-			return service.delete(product).then(Mono.just(ResponseEntity.noContent().build()));
-		}).defaultIfEmpty(ResponseEntity.notFound().build());
+			return service.delete(product).then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
+		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
 	}
 }
