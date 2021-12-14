@@ -1,5 +1,8 @@
 package com.bolsadeideas.springboot.webflux.app;
 
+import java.util.List;
+
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +30,12 @@ class SpringBootWebfluxApirestApplicationTests {
 		.expectStatus().isOk()
 		.expectHeader().contentType(MediaType.APPLICATION_JSON)
 		.expectBodyList(Producto.class)
-		.hasSize(9);
+		.consumeWith(response -> {
+			List<Producto> productos = response.getResponseBody();
+			productos.forEach(producto -> {
+				System.out.println(producto.getNombre());
+			});
+			Assertions.assertThat(productos.size() > 0).isTrue();
+		});
 	}
 }
