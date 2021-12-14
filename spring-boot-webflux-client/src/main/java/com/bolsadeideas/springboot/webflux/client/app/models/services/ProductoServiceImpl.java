@@ -21,8 +21,8 @@ public class ProductoServiceImpl implements IProductoService {
 	public Flux<Producto> findAll() {
 		return client.get()
 				.accept(MediaType.APPLICATION_JSON)
-				.exchange()
-				.flatMapMany(response -> response.bodyToFlux(Producto.class));
+				.retrieve()
+				.bodyToFlux(Producto.class);
 	}
 
 	@Override
@@ -32,8 +32,8 @@ public class ProductoServiceImpl implements IProductoService {
 		return client.get()
 				.uri("/{id}", params)
 				.accept(MediaType.APPLICATION_JSON)
-				.exchange()
-				.flatMap(response -> response.bodyToMono(Producto.class));
+				.retrieve()
+				.bodyToMono(Producto.class);
 	}
 
 	@Override
