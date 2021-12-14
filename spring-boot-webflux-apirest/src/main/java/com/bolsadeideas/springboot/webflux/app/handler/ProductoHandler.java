@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.FormFieldPart;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -18,6 +21,7 @@ import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
 import com.bolsadeideas.springboot.webflux.app.models.services.ProductoService;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -28,6 +32,9 @@ public class ProductoHandler {
 	
 	@Value("${config.uploads.path}")
 	private String path;
+	
+	@Autowired
+	private Validator validator;
 
 	public Mono<ServerResponse> crearConFoto(ServerRequest request) {
 		Mono<Producto> producto = request.multipartData().map(multipart -> {
@@ -92,14 +99,23 @@ public class ProductoHandler {
 	public Mono<ServerResponse> crear(ServerRequest request) {
 		Mono<Producto> producto = request.bodyToMono(Producto.class);
 		return producto.flatMap(product -> {
-			if (product.getCreateAt() == null) {
-				product.setCreateAt(new Date());
+			Errors errors = new BeanPropertyBindingResult(product, Producto.class.getName());
+			validator.validate(product, errors);
+			if (errors.hasErrors()) {
+				return Flux.fromIterable(errors.getFieldErrors())
+						.map(fieldError -> "El campo " + fieldError.getField() + " " + fieldError.getDefaultMessage())
+						.collectList()
+						.flatMap(list -> ServerResponse.badRequest().bodyValue(list));
+			} else {				
+				if (product.getCreateAt() == null) {
+					product.setCreateAt(new Date());
+				}
+				return service.save(product).flatMap(productPersisted -> ServerResponse
+						.created(URI.create("/api/v2/productos/".concat(productPersisted.getId())))
+						.contentType(MediaType.APPLICATION_JSON)
+						.bodyValue(productPersisted));
 			}
-			return service.save(product);
-		}).flatMap(product -> ServerResponse
-				.created(URI.create("/api/v2/productos/".concat(product.getId())))
-				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(product));
+		});
 	}
 
 	public Mono<ServerResponse> editar(ServerRequest request) {
