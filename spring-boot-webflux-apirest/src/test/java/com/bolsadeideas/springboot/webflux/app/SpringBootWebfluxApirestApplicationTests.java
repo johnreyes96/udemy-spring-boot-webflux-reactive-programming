@@ -98,4 +98,27 @@ class SpringBootWebfluxApirestApplicationTests {
 				.jsonPath("$.nombre").isEqualTo("Mesa comedor")
 				.jsonPath("$.categoria.nombre").isEqualTo("Muebles");
 	}
+	
+	@Test
+	public void crear2Test() {
+		Categoria categoria = service.findCategoriaByNombre("Muebles").block();
+		Producto producto = new Producto("Mesa comedor", 100.00, categoria);
+		
+		client.post()
+		.uri("/api/v2/productos")
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON)
+		.body(Mono.just(producto), Producto.class)
+		.exchange()
+		.expectStatus().isCreated()
+		.expectHeader().contentType(MediaType.APPLICATION_JSON)
+		.expectBody(Producto.class)
+		.consumeWith(response -> {
+			Producto product = response.getResponseBody();
+			
+			Assertions.assertThat(product.getId()).isNotEmpty();
+			Assertions.assertThat(product.getNombre()).isEqualTo("Mesa comedor");
+			Assertions.assertThat(product.getCategoria().getNombre()).isNotEmpty();
+		});
+	}
 }
