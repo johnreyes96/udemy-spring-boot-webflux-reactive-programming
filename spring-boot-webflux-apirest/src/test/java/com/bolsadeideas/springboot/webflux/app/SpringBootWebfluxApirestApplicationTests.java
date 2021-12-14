@@ -12,8 +12,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
 import com.bolsadeideas.springboot.webflux.app.models.services.ProductoService;
+
+import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -62,5 +65,23 @@ class SpringBootWebfluxApirestApplicationTests {
 			Assertions.assertThat(product.getId().length() > 0).isTrue();
 			Assertions.assertThat(product.getNombre()).isEqualTo("TV Panasonic Pantalla LCD");
 		});
+	}
+	
+	@Test
+	public void crearTest() {
+		Categoria categoria = service.findCategoriaByNombre("Muebles").block();
+		Producto producto = new Producto("Mesa comedor", 100.00, categoria);
+		
+		client.post()
+		.uri("/api/v2/productos")
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON)
+		.body(Mono.just(producto), Producto.class)
+		.exchange()
+		.expectStatus().isCreated()
+		.expectHeader().contentType(MediaType.APPLICATION_JSON)
+		.expectBody().jsonPath("$.id").isNotEmpty()
+				.jsonPath("$.nombre").isEqualTo("Mesa comedor")
+				.jsonPath("$.categoria.nombre").isEqualTo("Muebles");
 	}
 }
