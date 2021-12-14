@@ -1,5 +1,7 @@
 package com.bolsadeideas.springboot.webflux.client.app.models.services;
 
+import org.springframework.http.codec.multipart.FilePart;
+
 import com.bolsadeideas.springboot.webflux.client.app.models.Producto;
 
 import reactor.core.publisher.Flux;
@@ -16,4 +18,6 @@ public interface IProductoService {
 	public Mono<Producto> update(Producto producto, String id);
 	
 	public Mono<Void> delete(String id);
+	
+	public Mono<Producto> upload(FilePart file, String id);
 }

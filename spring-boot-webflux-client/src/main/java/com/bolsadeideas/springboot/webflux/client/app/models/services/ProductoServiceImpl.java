@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -11,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 import com.bolsadeideas.springboot.webflux.client.app.models.Producto;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;;
+import static org.springframework.http.MediaType.*;
 
 @Service
 public class ProductoServiceImpl implements IProductoService {
@@ -65,5 +69,20 @@ public class ProductoServiceImpl implements IProductoService {
 				.uri("/{id}", Collections.singletonMap("id", id))
 				.retrieve()
 				.bodyToMono(Void.class);
+	}
+
+	@Override
+	public Mono<Producto> upload(FilePart file, String id) {
+		MultipartBodyBuilder parts = new MultipartBodyBuilder();
+		parts.asyncPart("file", file.content(), DataBuffer.class)
+			.headers(headers -> {
+				headers.setContentDispositionFormData("file", file.filename());
+			});
+		return client.post()
+				.uri("/upload/{id}", Collections.singletonMap("id", id))
+				.contentType(MULTIPART_FORM_DATA)
+				.bodyValue(parts.build())
+				.retrieve()
+				.bodyToMono(Producto.class);
 	}
 }

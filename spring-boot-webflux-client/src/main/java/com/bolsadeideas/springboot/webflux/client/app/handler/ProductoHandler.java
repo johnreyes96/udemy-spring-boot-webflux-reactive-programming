@@ -3,6 +3,7 @@ package com.bolsadeideas.springboot.webflux.client.app.handler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -15,8 +16,10 @@ import com.bolsadeideas.springboot.webflux.client.app.models.services.IProductoS
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
+import java.io.File;
 import java.net.URI;
-import java.util.Date;;
+import java.util.Date;
+import java.util.UUID;;
 
 @Component
 public class ProductoHandler {
@@ -74,5 +77,15 @@ public class ProductoHandler {
 	public Mono<ServerResponse> eliminar(ServerRequest request) {
 		String id = request.pathVariable("id");
 		return service.delete(id).then(ServerResponse.noContent().build());
+	}
+
+	public Mono<ServerResponse> upload(ServerRequest request) {
+		String id = request.pathVariable("id");
+		return request.multipartData().map(multipart -> multipart.toSingleValueMap().get("file"))
+				.cast(FilePart.class)
+				.flatMap(file -> service.upload(file, id))
+				.flatMap(producto -> ServerResponse.created(URI.create("/api/client/".concat(producto.getId())))
+						.contentType(MediaType.APPLICATION_JSON)
+						.bodyValue(producto));
 	}
 }
