@@ -54,7 +54,13 @@ class SpringBootWebfluxApirestApplicationTests {
 		.exchange()
 		.expectStatus().isOk()
 		.expectHeader().contentType(MediaType.APPLICATION_JSON)
-		.expectBody().jsonPath("$.id").isNotEmpty()
-		 		.jsonPath("$.nombre").isEqualTo("TV Panasonic Pantalla LCD");
+		.expectBody(Producto.class)
+		.consumeWith(response -> {
+			Producto product = response.getResponseBody();
+			
+			Assertions.assertThat(product.getId()).isNotEmpty();
+			Assertions.assertThat(product.getId().length() > 0).isTrue();
+			Assertions.assertThat(product.getNombre()).isEqualTo("TV Panasonic Pantalla LCD");
+		});
 	}
 }
