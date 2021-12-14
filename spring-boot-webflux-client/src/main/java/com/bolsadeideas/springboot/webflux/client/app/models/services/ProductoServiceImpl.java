@@ -2,15 +2,15 @@ package com.bolsadeideas.springboot.webflux.client.app.models.services;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import com.bolsadeideas.springboot.webflux.client.app.models.Producto;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import static org.springframework.web.reactive.function.BodyInserters.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;;
 
 public class ProductoServiceImpl implements IProductoService {
 	
@@ -20,7 +20,7 @@ public class ProductoServiceImpl implements IProductoService {
 	@Override
 	public Flux<Producto> findAll() {
 		return client.get()
-				.accept(MediaType.APPLICATION_JSON)
+				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToFlux(Producto.class);
 	}
@@ -31,14 +31,19 @@ public class ProductoServiceImpl implements IProductoService {
 		params.put("id", id);
 		return client.get()
 				.uri("/{id}", params)
-				.accept(MediaType.APPLICATION_JSON)
+				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToMono(Producto.class);
 	}
 
 	@Override
 	public Mono<Producto> save(Producto producto) {
-		return null;
+		return client.post()
+				.contentType(APPLICATION_JSON)
+				.accept(APPLICATION_JSON)
+				.body(fromValue(producto))
+				.retrieve()
+				.bodyToMono(Producto.class);
 	}
 
 	@Override
