@@ -48,7 +48,21 @@ class SpringBootWebfluxApirestApplicationTests {
 	}
 
 	@Test
-	public void verrTest() {
+	public void verTest() {
+		Producto producto = service.findByNombre("TV Panasonic Pantalla LCD").block();
+		
+		client.get()
+		.uri("/api/v2/productos/{id}", Collections.singletonMap("id", producto.getId()))
+		.accept(MediaType.APPLICATION_JSON)
+		.exchange()
+		.expectStatus().isOk()
+		.expectHeader().contentType(MediaType.APPLICATION_JSON)
+		.expectBody().jsonPath("$.id").isNotEmpty()
+ 				.jsonPath("$.nombre").isEqualTo("TV Panasonic Pantalla LCD");
+	}
+
+	@Test
+	public void ver2Test() {
 		Producto producto = service.findByNombre("TV Panasonic Pantalla LCD").block();
 		
 		client.get()
