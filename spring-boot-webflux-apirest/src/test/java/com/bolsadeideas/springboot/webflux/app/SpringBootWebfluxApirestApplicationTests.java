@@ -140,4 +140,21 @@ class SpringBootWebfluxApirestApplicationTests {
 				.jsonPath("$.nombre").isEqualTo("Asus Notebook")
 				.jsonPath("$.categoria.nombre").isEqualTo("Electrónico");
 	}
+	
+	@Test
+	public void eliminarTest() {
+		Producto producto = service.findByNombre("Mica Cómoda 5 Cajones").block();
+		
+		client.delete()
+		.uri("/api/v2/productos/{id}", Collections.singletonMap("id", producto.getId()))
+		.exchange()
+		.expectStatus().isNoContent()
+		.expectBody().isEmpty();
+		
+		client.get()
+		.uri("/api/v2/productos/{id}", Collections.singletonMap("id", producto.getId()))
+		.exchange()
+		.expectStatus().isNotFound()
+		.expectBody().isEmpty();
+	}
 }
