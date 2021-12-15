@@ -50,7 +50,7 @@ public class ProductoController {
 		Mono<Producto> producto = service.findById(id)
 				.doOnNext(product -> {
 					logger.info("Producto: " + product.getNombre());
-				});
+				}).defaultIfEmpty(new Producto());
 		model.addAttribute("titulo", "Editar Producto");
 		model.addAttribute("producto", producto);
 		return Mono.just("form");
