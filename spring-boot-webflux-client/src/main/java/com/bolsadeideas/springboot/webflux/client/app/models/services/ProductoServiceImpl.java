@@ -20,11 +20,11 @@ import static org.springframework.http.MediaType.*;
 public class ProductoServiceImpl implements IProductoService {
 	
 	@Autowired
-	private WebClient client;
+	private WebClient.Builder client;
 
 	@Override
 	public Flux<Producto> findAll() {
-		return client.get()
+		return client.build().get()
 				.accept(APPLICATION_JSON)
 				.retrieve()
 				.bodyToFlux(Producto.class);
@@ -34,7 +34,7 @@ public class ProductoServiceImpl implements IProductoService {
 	public Mono<Producto> findById(String id) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("id", id);
-		return client.get()
+		return client.build().get()
 				.uri("/{id}", params)
 				.accept(APPLICATION_JSON)
 				.retrieve()
@@ -43,7 +43,7 @@ public class ProductoServiceImpl implements IProductoService {
 
 	@Override
 	public Mono<Producto> save(Producto producto) {
-		return client.post()
+		return client.build().post()
 				.contentType(APPLICATION_JSON)
 				.accept(APPLICATION_JSON)
 				.bodyValue(producto)
@@ -53,7 +53,7 @@ public class ProductoServiceImpl implements IProductoService {
 
 	@Override
 	public Mono<Producto> update(Producto producto, String id) {
-		return client.put()
+		return client.build().put()
 				.uri("/{id}", Collections.singletonMap("id", id))
 				.contentType(APPLICATION_JSON)
 				.accept(APPLICATION_JSON)
@@ -64,7 +64,7 @@ public class ProductoServiceImpl implements IProductoService {
 
 	@Override
 	public Mono<Void> delete(String id) {
-		return client.delete()
+		return client.build().delete()
 				.uri("/{id}", Collections.singletonMap("id", id))
 				.retrieve()
 				.bodyToMono(Void.class);
@@ -77,7 +77,7 @@ public class ProductoServiceImpl implements IProductoService {
 			.headers(headers -> {
 				headers.setContentDispositionFormData("file", file.filename());
 			});
-		return client.post()
+		return client.build().post()
 				.uri("/upload/{id}", Collections.singletonMap("id", id))
 				.contentType(MULTIPART_FORM_DATA)
 				.bodyValue(parts.build())
