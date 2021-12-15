@@ -5,6 +5,8 @@
 	<title th:text="${titulo}">Insert title here</title>
 </head>
 <body>
+	<div th:if="${param.error != null}" th:text="${param.error}"></div>
+	<div th:if="${param.success != null}" th:text="${param.success}"></div> 
 	<h1 th:text="${titulo}"></h1>
 	<a th:href="@{/form}">Crear +</a>
 	<table>
@@ -23,7 +25,7 @@
 				<td th:text="${producto.nombre}"></td>
 				<td th:text="${producto.precio}"></td>
 				<td th:text="${producto.createAt}"></td>
-				<td><a th:href="@{/form/} + ${producto.id}">Editar</a></td>
+				<td><a th:href="@{/form-v2/} + ${producto.id}">Editar</a></td>
 			</tr>
 		</tbody>
 	</table>

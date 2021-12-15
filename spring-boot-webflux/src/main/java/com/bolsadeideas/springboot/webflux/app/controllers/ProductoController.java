@@ -42,6 +42,7 @@ public class ProductoController {
 	public Mono<String> crear(Model model) {
 		model.addAttribute("producto", new Producto());
 		model.addAttribute("titulo", "Formulario de producto");
+		model.addAttribute("boton", "Crear");
 		return Mono.just("form");
 	}
 	
@@ -51,9 +52,29 @@ public class ProductoController {
 				.doOnNext(product -> {
 					logger.info("Producto: " + product.getNombre());
 				}).defaultIfEmpty(new Producto());
+		model.addAttribute("boton", "Editar");
 		model.addAttribute("titulo", "Editar Producto");
 		model.addAttribute("producto", producto);
 		return Mono.just("form");
+	}
+	
+	@GetMapping("/form-v2/{id}")
+	public Mono<String> editarV2(@PathVariable String id, Model model) {
+		return service.findById(id)
+				.doOnNext(producto -> {
+					logger.info("Producto: " + producto.getNombre());
+					model.addAttribute("boton", "Editar");
+					model.addAttribute("titulo", "Editar Producto");
+					model.addAttribute("producto", producto);
+				}).defaultIfEmpty(new Producto())
+				.flatMap(producto -> {
+					if (producto.getId() == null) {
+						return Mono.error(new InterruptedException("No existe el producto"));
+					}
+					return Mono.just(producto);
+				})
+				.then(Mono.just("form"))
+				.onErrorResume(exception -> Mono.just("redirect:/listar?error=no+existe+el+producto"));
 	}
 	
 	@PostMapping("/form")
