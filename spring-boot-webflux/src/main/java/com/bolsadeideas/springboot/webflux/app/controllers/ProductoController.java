@@ -43,8 +43,8 @@ public class ProductoController {
 	}
 	
 	@GetMapping("/form/{id}")
-	public Mono<String> editar(@PathVariable(name = "id") String idProducto, Model model) {
-		Mono<Producto> producto = service.findById(idProducto)
+	public Mono<String> editar(@PathVariable String id, Model model) {
+		Mono<Producto> producto = service.findById(id)
 				.doOnNext(product -> {
 					logger.info("Producto: " + product.getNombre());
 				});
