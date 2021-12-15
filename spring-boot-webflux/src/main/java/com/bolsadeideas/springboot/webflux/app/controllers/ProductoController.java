@@ -10,6 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
@@ -18,6 +20,7 @@ import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@SessionAttributes("producto")
 @Controller
 public class ProductoController {
 
@@ -54,7 +57,8 @@ public class ProductoController {
 	}
 	
 	@PostMapping("/form")
-	public Mono<String> guardar(Producto producto) {
+	public Mono<String> guardar(Producto producto, SessionStatus status) {
+		status.setComplete();
 		return service.save(producto)
 				.doOnNext(product -> {
 					logger.info("Producto guardado: " + product.getNombre() + " Id: " + product.getId());
