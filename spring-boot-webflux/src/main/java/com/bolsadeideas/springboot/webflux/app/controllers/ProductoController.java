@@ -46,7 +46,7 @@ public class ProductoController {
 		return service.save(producto)
 				.doOnNext(product -> {
 					logger.info("Producto guardado: " + product.getNombre() + " Id: " + product.getId());
-				}).then(Mono.just("redirect:/listar"));
+				}).thenReturn("redirect:/listar");
 	}
 	
 	@GetMapping("/listar-datadriver")
