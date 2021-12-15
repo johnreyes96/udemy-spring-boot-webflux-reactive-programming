@@ -14,6 +14,7 @@
 				<th>Nombre</th>
 				<th>Precio</th>
 				<th>Fecha</th>
+				<th>Editar</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -22,6 +23,7 @@
 				<td th:text="${producto.nombre}"></td>
 				<td th:text="${producto.precio}"></td>
 				<td th:text="${producto.createAt}"></td>
+				<td><a th:href="@{/form/} + ${producto.id}">Editar</a></td>
 			</tr>
 		</tbody>
 	</table>
