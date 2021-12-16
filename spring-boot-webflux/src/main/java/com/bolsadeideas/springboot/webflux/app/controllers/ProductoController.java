@@ -97,7 +97,7 @@ public class ProductoController {
 	}
 	
 	@PostMapping("/form")
-	public Mono<String> guardar(@Valid Producto producto, BindingResult result, Model model, @RequestPart(name = "file") FilePart archivo, SessionStatus status) {
+	public Mono<String> guardar(@Valid Producto producto, BindingResult result, Model model, @RequestPart FilePart file, SessionStatus status) {
 		//TODO: Don't run the .hasErrors
 		if (result.hasErrors()) {
 			model.addAttribute("titulo", "Errores en formulario producto");
@@ -110,8 +110,8 @@ public class ProductoController {
 				if (producto.getCreateAt() == null) {
 					producto.setCreateAt(new Date());
 				}
-				if (!archivo.filename().isEmpty()) {
-					producto.setFoto(UUID.randomUUID().toString() + "-" + archivo.filename()
+				if (!file.filename().isEmpty()) {
+					producto.setFoto(UUID.randomUUID().toString() + "-" + file.filename()
 						.replace(" ", "")
 						.replace(":", "")
 						.replace("\\", "")
@@ -123,8 +123,8 @@ public class ProductoController {
 				logger.info("Categoria asignada: " + product.getCategoria().getNombre() + " Id Cat: " + product.getCategoria().getId());
 				logger.info("Producto guardado: " + product.getNombre() + " Id: " + product.getId());
 			}).flatMap(product -> {
-				if (!archivo.filename().isEmpty()) {
-					return archivo.transferTo(new File(path + product.getFoto()));
+				if (!file.filename().isEmpty()) {
+					return file.transferTo(new File(path + product.getFoto()));
 				}
 				return Mono.empty();
 			}).thenReturn("redirect:/listar?success=producto+guardado+con+exito");
