@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 
 import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
-import com.bolsadeideas.springboot.webflux.app.models.services.ProductoServiceImpl;
+import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
 
 import reactor.core.publisher.Flux;
 
@@ -20,7 +20,7 @@ import reactor.core.publisher.Flux;
 public class SpringBootWebfluxApplication implements CommandLineRunner {
 
 	@Autowired
-	private ProductoServiceImpl service;
+	private IProductoService service;
 	
 	@Autowired
 	private ReactiveMongoTemplate mongoTemplate;

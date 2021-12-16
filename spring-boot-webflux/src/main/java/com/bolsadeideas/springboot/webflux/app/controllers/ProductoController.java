@@ -12,12 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
 
+import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
 import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
 
@@ -32,6 +34,11 @@ public class ProductoController {
 	private IProductoService service;
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProductoController.class);
+	
+	@ModelAttribute("categorias")
+	public Flux<Categoria> cagetorias() {
+		return service.findAllCategoria();
+	}
 	
 	@GetMapping({"/", "/listar"})
 	public String listar(Model model) {
