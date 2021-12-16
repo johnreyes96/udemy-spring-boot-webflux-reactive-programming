@@ -48,6 +48,22 @@ public class ProductoController {
 		return service.findAllCategoria();
 	}
 	
+	@GetMapping("/ver/{id}")
+	public Mono<String> ver(Model model, @PathVariable String id) {
+		return service.findById(id)
+				.doOnNext(producto -> {
+					model.addAttribute("producto", producto);
+					model.addAttribute("titulo", "Detalle Producto");
+				}).switchIfEmpty(Mono.just(new Producto()))
+				.flatMap(producto -> {
+					if (producto.getId() == null) {
+						return Mono.error(new InterruptedException("No existe el producto"));
+					}
+					return Mono.just(producto);
+				}).then(Mono.just("ver"))
+				.onErrorResume(exception -> Mono.just("redirect:/listar?error=no+existe+el+producto"));
+	}
+	
 	@GetMapping({"/", "/listar"})
 	public String listar(Model model) {
 		Flux<Producto> productos = service.findAllConNombreUpperCase();
