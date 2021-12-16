@@ -110,7 +110,11 @@ public class ProductoController {
 					}
 					return Mono.just(producto);
 				})
-				.flatMap(service::delete)
+				.flatMap(producto -> {
+					logger.info("Eliminando producto: " + producto.getNombre());
+					logger.info("Eliminando producto Id: " + producto.getId());
+					return service.delete(producto);
+				})
 				.then(Mono.just("redirect:/listar?success=producto+eliminado+con+exito"))
 				.onErrorResume(exception -> Mono.just("redirect:/listar?error=no+existe+el+producto+a+eliminar"));
 	}
