@@ -11,8 +11,8 @@
 		<ul>
 			<li th:text="${producto.nombre}"></li>
 			<li th:text="'Id: ' + ${producto.id}"></li>
-			<li th:text="'Precio: ' + ${producto.precio}"></li>
-			<li th:text="'Fecha: ' + ${producto.createAt}"></li>
+			<li th:text="'Precio: ' + ${#numbers.formatCurrency(producto.precio)}"></li>
+			<li th:text="'Fecha: ' + ${#calendars.format(producto.createAt, 'dd/MM/yyyy')}"></li>
 		</ul>
 	</div>
 </body>
