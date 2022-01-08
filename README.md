@@ -38,7 +38,7 @@ javac -version
 
 Install Spring Tools IDE (4.xx.x)
 
-Install mongoDB compass 1.xx.x or top
+Install MongoDB compass 1.xx.x or top
 
 PATH:
 
@@ -52,7 +52,13 @@ Open cmd and run the following commands to verify the MongoDB installation:
 mongo -version
 ```
 
-Finally add connection in MongoDB: localhost:27017
+### Optional
+
+Install Robo 3T and add MongoDB connections (also in MongoDB compass):
+
+```
+localhost:27017
+```
 
 ## How to clone
 * ```git clone repository```
