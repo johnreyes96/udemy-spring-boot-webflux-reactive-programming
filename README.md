@@ -1,4 +1,4 @@
-# Project reactives made with Spring Boot 2 and Spring WebFlux
+# Projects reactives made with Spring Boot 2 and Spring WebFlux
 This repository is about udemy curse Programación Reactiva con Spring Boot 2 y Spring WebFlux based with reactor project.
 
 ## Tecnologies and tools
