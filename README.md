@@ -63,6 +63,7 @@ localhost:27017
 ## How to clone
 * ```git clone repository```
 * In Spring Tools > Import Projects from File System or Archive > Directory... > Select All > Finish
+* Right click on any project > Maven > Update Project... > Select All > OK
 * Run projects
 
 ### Notes
