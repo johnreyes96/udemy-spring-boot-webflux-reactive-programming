@@ -1,4 +1,4 @@
-# Projects reactives made with Spring Boot 2 and Spring WebFlux
+# Projects reactives with Spring Boot 2 and Spring WebFlux
 
 ![Languages](https://img.shields.io/github/languages/count/johnreyes96/udemy-spring-boot-webflux-reactive-programming?style=plastic)
 ![Language Top](https://img.shields.io/github/languages/top/johnreyes96/udemy-spring-boot-webflux-reactive-programming?style=plastic)
