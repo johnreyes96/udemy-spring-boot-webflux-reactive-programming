@@ -1,4 +1,11 @@
 # Projects reactives made with Spring Boot 2 and Spring WebFlux
+
+![Languages](https://img.shields.io/github/languages/count/johnreyes96/udemy-spring-boot-webflux-reactive-programming?style=plastic)
+![Language Top](https://img.shields.io/github/languages/top/johnreyes96/udemy-spring-boot-webflux-reactive-programming?style=plastic)
+![Repo Size](https://img.shields.io/github/repo-size/johnreyes96/udemy-spring-boot-webflux-reactive-programming?style=plastic)
+![License](https://img.shields.io/github/license/johnreyes96/udemy-spring-boot-webflux-reactive-programming?style=plastic)
+![Last Commit](https://img.shields.io/github/last-commit/johnreyes96/udemy-spring-boot-webflux-reactive-programming?style=plastic)
+
 This repository is about udemy curse Programación Reactiva con Spring Boot 2 y Spring WebFlux based with reactor project.
 
 ## Tecnologies and tools
