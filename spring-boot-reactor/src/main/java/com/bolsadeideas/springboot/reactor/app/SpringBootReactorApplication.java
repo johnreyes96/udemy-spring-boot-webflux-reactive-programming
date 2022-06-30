@@ -217,19 +217,12 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 		Flux.just(1, 2, 3, 4)
 				.map(element -> (element * 2))
 				.zipWith(ranges, (one, two) -> String.format("Primer Flux %d, Segundo Flux %d", one, two))
-				.subscribe(text -> logger.info(text));
+				.subscribe(logger::info);
 	}
 
 	private void exampleUserCommentsZipWithForm2() {
-		Mono<User> userMono = Mono.fromCallable(() -> new User("John", "Reyes"));
-		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> {
-			Comments comments = new Comments();
-			comments.addComment("Hola pepe, qué tal!");
-			comments.addComment("Mañana voy para la playa!");
-			comments.addComment("Estoy tomando el curso de spring con reactor");
-			return comments;
-		});
-		
+		Mono<User> userMono = Mono.fromCallable(() -> getUser());
+		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> getComments());
 		Mono<UserComments> userComments = userMono
 				.zipWith(commentsUserMono)
 				.map(tuple -> {
@@ -241,45 +234,35 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 	}
 
 	private void exampleUserCommentsZipWith() {
-		Mono<User> userMono = Mono.fromCallable(() -> new User("John", "Reyes"));
-		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> {
-			Comments comments = new Comments();
-			comments.addComment("Hola pepe, qué tal!");
-			comments.addComment("Mañana voy para la playa!");
-			comments.addComment("Estoy tomando el curso de spring con reactor");
-			return comments;
-		});
-		
-		Mono<UserComments> userComments = userMono.zipWith(commentsUserMono, (user, commentsUser) -> 
-				new UserComments(user, commentsUser));
+		Mono<User> userMono = Mono.fromCallable(() -> getUser());
+		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> getComments());
+		Mono<UserComments> userComments = userMono
+				.zipWith(commentsUserMono, (user, commentsUser) -> new UserComments(user, commentsUser));
 		userComments.subscribe(userComment -> logger.info(userComment.toString()));
 	}
 
 	private void exampleUserCommentsFlatMap() {
-		Mono<User> userMono = Mono.fromCallable(() -> new User("John", "Reyes"));
-		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> {
-			Comments comments = new Comments();
-			comments.addComment("Hola pepe, qué tal!");
-			comments.addComment("Mañana voy para la playa!");
-			comments.addComment("Estoy tomando el curso de spring con reactor");
-			return comments;
-		});
-		
-		Mono<UserComments> userComments = userMono.flatMap(user -> commentsUserMono.map(comment -> 
-				new UserComments(user, comment)));
+		Mono<User> userMono = Mono.fromCallable(() -> getUser());
+		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> getComments());
+		Mono<UserComments> userComments = userMono
+				.flatMap(user -> commentsUserMono.map(comment -> new UserComments(user, comment)));
 		userComments.subscribe(userComment -> logger.info(userComment.toString()));
 	}
 
+	private User getUser() {
+		return new User("John", "Reyes");
+	}
+
+	private Comments getComments() {
+		Comments comments = new Comments();
+		comments.addComment("Hola pepe, qué tal!");
+		comments.addComment("Mañana voy para la playa!");
+		comments.addComment("Estoy tomando el curso de spring con reactor");
+		return comments;
+	}
+
 	private void exampleCollectList() {
-		List<User> users = new ArrayList<>();
-		users.add(new User("Andres", "Guzman"));
-		users.add(new User("Pedro", "Jimenez"));
-		users.add(new User("Maria", "Sulivan"));
-		users.add(new User("Diego", "Jaramillo"));
-		users.add(new User("Juan", "Ramirez"));
-		users.add(new User("Bruce", "Lee"));
-		users.add(new User("Bruce", "Willis"));
-		
+		List<User> users = getUsers();
 		Flux.fromIterable(users)
 				.collectList()
 				.subscribe(list -> {
@@ -288,6 +271,20 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 	}
 
 	private void exampleToString() {
+		List<User> users = getUsers();
+		Flux.fromIterable(users)
+				.map(user -> user.getName().toUpperCase().concat(" ").concat(user.getLastName().toUpperCase()))
+				.flatMap(name -> {
+					if (name.contains("bruce".toUpperCase()))
+						return Mono.just(name);
+					
+					return Mono.empty();
+				})
+				.map(String::toLowerCase)
+				.subscribe(name -> logger.info(name.toString()));
+	}
+
+	private List<User> getUsers() {
 		List<User> users = new ArrayList<>();
 		users.add(new User("Andres", "Guzman"));
 		users.add(new User("Pedro", "Jimenez"));
@@ -296,31 +293,11 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 		users.add(new User("Juan", "Ramirez"));
 		users.add(new User("Bruce", "Lee"));
 		users.add(new User("Bruce", "Willis"));
-		
-		Flux.fromIterable(users)
-				.map(user -> user.getName().toUpperCase().concat(" ").concat(user.getLastName().toUpperCase()))
-				.flatMap(name -> {
-					if (name.contains("bruce".toUpperCase())) {
-						return Mono.just(name);
-					}
-					return Mono.empty();
-				})
-				.map(name -> {
-					return name.toLowerCase();
-				})
-				.subscribe(name -> logger.info(name.toString()));
+		return users;
 	}
 
 	private void exampleFlatMap() {
-		List<String> names = new ArrayList<>();
-		names.add("Andres Guzman");
-		names.add("Pedro Jimenez");
-		names.add("Maria Sulivan");
-		names.add("Diego Jaramillo");
-		names.add("Juan Ramirez");
-		names.add("Bruce Lee");
-		names.add("Bruce Willis");
-		
+		List<String> names = getNames();
 		Flux.fromIterable(names)
 				.map(name -> new User(name.split(" ")[0].toUpperCase(), name.split(" ")[1].toUpperCase()))
 				.flatMap(user -> {
@@ -338,15 +315,7 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 	}
 
 	private void exampleIterable() {
-		List<String> names = new ArrayList<>();
-		names.add("Andres Guzman");
-		names.add("Pedro Jimenez");
-		names.add("Maria Sulivan");
-		names.add("Diego Jaramillo");
-		names.add("Juan Ramirez");
-		names.add("Bruce Lee");
-		names.add("Bruce Willis");
-		
+		List<String> names = getNames();
 		Flux<String> namesFlux = Flux.fromIterable(names); 
 		Flux<User> users = namesFlux.map(name -> new User(name.split(" ")[0].toUpperCase(), name.split(" ")[1].toUpperCase()))
 				.filter(user -> "bruce".equalsIgnoreCase(user.getName()))
@@ -370,5 +339,17 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 						logger.info("Ha finalizado la ejecución del observable con éxito!");
 					}
 				});
+	}
+
+	private List<String> getNames() {
+		List<String> names = new ArrayList<>();
+		names.add("Andres Guzman");
+		names.add("Pedro Jimenez");
+		names.add("Maria Sulivan");
+		names.add("Diego Jaramillo");
+		names.add("Juan Ramirez");
+		names.add("Bruce Lee");
+		names.add("Bruce Willis");
+		return names;
 	}
 }
