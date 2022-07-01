@@ -33,8 +33,11 @@ public class SpringBootWebfluxApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		mongoTemplate.dropCollection("productos").subscribe();
-		mongoTemplate.dropCollection("categorias").subscribe();
+		restoreDB();
+		populateDB();
+	}
+
+	private void populateDB() {
 		Categoria electronico = new Categoria("Electrónico");
 		Categoria deporte = new Categoria("Deporte");
 		Categoria computacion = new Categoria("Computación");
@@ -42,9 +45,8 @@ public class SpringBootWebfluxApplication implements CommandLineRunner {
 		
 		Flux.just(electronico, deporte, computacion, muebles)
 		.flatMap(service::saveCategoria)
-		.doOnNext(categoria -> {
-			logger.info("Categoria creada: " + categoria.getNombre() + ", Id: " + categoria.getId());
-		}).thenMany(
+		.doOnNext(this::printCategoryCreated)
+		.thenMany(
 			Flux.just(new Producto("TV Panasonic Pantalla LCD", 456.89, electronico),
 					new Producto("Sony Camara HD Digital", 177.89, electronico),
 					new Producto("Apple iPod", 46.89, electronico),
@@ -59,7 +61,19 @@ public class SpringBootWebfluxApplication implements CommandLineRunner {
 				producto.setCreateAt(new Date());
 				return service.save(producto);
 			})
-		)
-		.subscribe(producto -> logger.info("Insert: " + producto.getId() + " " + producto.getNombre()));
+		).subscribe(this::printProductCreated);
+	}
+
+	public void restoreDB() {
+		mongoTemplate.dropCollection("productos").subscribe();
+		mongoTemplate.dropCollection("categorias").subscribe();
+	}
+
+	private void printCategoryCreated(Categoria categoria) {
+		logger.info("Categoria creada: " + categoria.getNombre() + ", Id: " + categoria.getId());
+	}
+	
+	private void printProductCreated(Producto producto) {
+		logger.info("Insert: " + producto.getId() + " " + producto.getNombre());
 	}
 }

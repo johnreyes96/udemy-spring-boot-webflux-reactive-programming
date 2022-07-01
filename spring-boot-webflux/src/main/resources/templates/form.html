@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title th:text="${titulo}">Insert title here</title>
+	<title th:text="${titulo}">Formulario de producto</title>
 </head>
 <body>
 	<h1 th:text="${titulo}"></h1>
@@ -35,7 +35,7 @@
 				<label for="categoria.id">Categoria</label>
 				<div>
 					<select th:field="*{categoria.id}">
-						<option value="">-- Seleccionar -- </option>
+						<option value="">-- Seleccionar --</option>
 						<option th:each="categoria: ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}"></option>
 					</select>
 				</div>
