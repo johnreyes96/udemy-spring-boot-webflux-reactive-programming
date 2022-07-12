@@ -50,7 +50,7 @@ public class ProductoServiceImpl implements IProductoService {
 
 	@Override
 	public Flux<Producto> findAllConNombreUpperCaseRepeat() {
-		return findAllConNombreUpperCase().repeat(5000);
+		return findAllConNombreUpperCase().repeat(5);
 	}
 
 	@Override
