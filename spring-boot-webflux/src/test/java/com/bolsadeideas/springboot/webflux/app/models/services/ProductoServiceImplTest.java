@@ -1,8 +1,5 @@
 package com.bolsadeideas.springboot.webflux.app.models.services;
 
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,15 +7,17 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.context.annotation.ComponentScan;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import com.bolsadeideas.springboot.webflux.app.models.dao.ICategoriaDao;
 import com.bolsadeideas.springboot.webflux.app.models.dao.IProductoDao;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
 
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @ComponentScan(basePackages = "com.bolsadeideas.springboot.webflux.app.models.services")
 public class ProductoServiceImplTest {
