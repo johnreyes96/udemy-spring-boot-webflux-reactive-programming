@@ -7,9 +7,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
-
 import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +28,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.thymeleaf.spring5.context.webflux.ReactiveDataDriverContextVariable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
 import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 @SessionAttributes("producto")
 @Controller
@@ -57,14 +54,14 @@ public class ProductoController {
 	
 	@GetMapping("/uploads/img/{nombreFoto:.+}")
 	public Mono<ResponseEntity<Resource>> verFoto(@PathVariable String nombreFoto) throws MalformedURLException {
-		Path ruta = Paths.get(path).resolve(nombreFoto).toAbsolutePath();
-		Resource imagen = new UrlResource(ruta.toUri());
+		Path ruta = getPath().resolve(nombreFoto).toAbsolutePath();
+		Resource imagen = getResource(ruta);
 		return Mono.just(ResponseEntity
 				.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + imagen.getFilename() + "\"")
 				.body(imagen));
 	}
-	
+
 	@GetMapping("/ver/{id}")
 	public Mono<String> ver(Model model, @PathVariable String id) {
 		return service.findById(id)
@@ -207,5 +204,13 @@ public class ProductoController {
 		model.addAttribute("productos", productos);
 		model.addAttribute("titulo", "Listado de productos");
 		return "listar-chunked";
+	}
+	
+	protected Resource getResource(Path ruta) throws MalformedURLException {
+		return new UrlResource(ruta.toUri());
+	}
+
+	protected Path getPath() {
+		return Paths.get(path);
 	}
 }
