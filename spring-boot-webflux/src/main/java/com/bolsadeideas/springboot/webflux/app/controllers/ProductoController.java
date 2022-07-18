@@ -101,9 +101,9 @@ public class ProductoController {
 				.doOnNext(product -> {
 					logger.info("Producto: " + product.getNombre());
 				}).defaultIfEmpty(new Producto());
-		model.addAttribute("boton", "Editar");
-		model.addAttribute("titulo", "Editar Producto");
 		model.addAttribute("producto", producto);
+		model.addAttribute("titulo", "Editar Producto");
+		model.addAttribute("boton", "Editar");
 		return Mono.just("form");
 	}
 	

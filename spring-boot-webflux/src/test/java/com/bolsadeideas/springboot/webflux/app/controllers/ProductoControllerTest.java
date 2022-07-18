@@ -219,4 +219,47 @@ public class ProductoControllerTest {
 		verify(model).addAttribute("titulo", "Formulario de producto");
 		verify(model).addAttribute("boton", "Crear");
 	}
+
+	@Test
+	public void editWhenFindProductByIdThenMustSetProductAndTitleAndButtonAndReturnMonoStringTest() {
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		Model model = Mockito.mock(Model.class);
+		Producto producto = new Producto();
+		Mono<Producto> product = Mono.just(producto);
+		doReturn(product).when(service).findById(id);
+		doReturn(model).when(model).addAttribute("producto", product);
+		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
+		doReturn(model).when(model).addAttribute("boton", "Editar");
+
+		StepVerifier.create(productoController.editar(id, model))
+		.expectNextMatches(expected -> "form".equals(expected))
+		.expectComplete()
+		.verify();
+
+		verify(service).findById(id);
+		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any()); // Return MonoDefaultIfEmpty
+		verify(model).addAttribute("titulo", "Editar Producto");
+		verify(model).addAttribute("boton", "Editar");
+	}
+
+	@Test
+	public void editWhenFindProductByIdDoesNotExistsThenMustSetNewProductAndTitleAndButtonAndReturnMonoStringTest() {
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		Model model = Mockito.mock(Model.class);
+		Mono<Producto> product = Mono.empty();
+		doReturn(product).when(service).findById(id);
+		doReturn(model).when(model).addAttribute("producto", product);
+		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
+		doReturn(model).when(model).addAttribute("boton", "Editar");
+
+		StepVerifier.create(productoController.editar(id, model))
+		.expectNextMatches(expected -> "form".equals(expected))
+		.expectComplete()
+		.verify();
+
+		verify(service).findById(id);
+		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any()); // Return MonoDefaultIfEmpty
+		verify(model).addAttribute("titulo", "Editar Producto");
+		verify(model).addAttribute("boton", "Editar");
+	}
 }
