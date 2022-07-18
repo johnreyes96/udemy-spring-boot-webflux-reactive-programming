@@ -204,7 +204,7 @@ public class ProductoControllerTest {
 	}
 
 	@Test
-	public void createWhenFindProductByIdDoesNotExistsThenMustCreateNewProductAndThrowExceptionAndReturnMonoWithARedirectTest() {
+	public void createMustSetNewProductAndTitleAndNameButtonAndReturnStringTest() {
 		Model model = Mockito.mock(Model.class);
 		doReturn(model).when(model).addAttribute(Mockito.eq("producto"), Mockito.any());
 		doReturn(model).when(model).addAttribute("titulo", "Formulario de producto");
