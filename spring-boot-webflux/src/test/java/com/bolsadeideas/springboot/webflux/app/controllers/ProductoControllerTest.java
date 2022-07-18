@@ -6,8 +6,8 @@ import static org.mockito.Mockito.verify;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +20,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 
 import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
 import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 @ComponentScan(basePackages = "com.bolsadeideas.springboot.webflux.app.controllers")
@@ -128,5 +130,93 @@ public class ProductoControllerTest {
 		verify(rute).resolve(photoName);
 		verify(rute).toAbsolutePath();
 		verify(productoController).getResource(rute);
+	}
+
+	@Test
+	public void viewWhenFindProductByIdThenMustSetProductAndTitleAndReturnMonoStringTest() {
+		Producto product = new Producto();
+		product.setId("id");
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		Model model = Mockito.mock(Model.class);
+		doReturn(Mono.just(product)).when(service).findById(id);
+		doReturn(model).when(model).addAttribute("producto", product);
+		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
+
+		StepVerifier.create(productoController.ver(model, id))
+		.expectNextMatches(expected -> "ver".equals(expected))
+		.expectComplete()
+		.verify();
+
+		verify(service).findById(id);
+		verify(model).addAttribute("producto", product);
+		verify(model).addAttribute("titulo", "Detalle Producto");
+	}
+
+	@Test
+	public void viewWhenFindProductByIdDoesNotExistsThenMustCreateNewProductAndThrowExceptionAndReturnMonoWithARedirectTest() {
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		Model model = Mockito.mock(Model.class);
+		doReturn(Mono.empty()).when(service).findById(id);
+
+		StepVerifier.create(productoController.ver(model, id))
+		.expectNextMatches(redirectExpected -> "redirect:/listar?error=no+existe+el+producto".equals(redirectExpected))
+		.expectComplete()
+		.verify();
+
+		verify(service).findById(id);
+		verify(model, Mockito.never()).addAttribute(Mockito.anyString(), Mockito.any());
+	}
+
+	@Test
+	public void listWhenFindAllWithNameUpperCaseReturnEmptyThenMustSetFluxEmptyAndTitleAndReturnStringTest() {
+		Flux<Producto> products = Flux.empty();
+		Model model = Mockito.mock(Model.class);
+		doReturn(products).when(service).findAllConNombreUpperCase();
+		doReturn(model).when(model).addAttribute("productos", products);
+		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
+
+		String response = productoController.listar(model);
+
+		Assert.assertEquals("listar", response);
+		verify(service).findAllConNombreUpperCase();
+		verify(model).addAttribute("productos", products);
+		verify(model).addAttribute("titulo", "Listado de productos");
+	}
+
+	@Test
+	public void listWhenFindAllWithNameUpperCaseReturnElementsThenMustSetProductsAndTitleAndReturnStringTest() {
+		Producto laptop = new Producto();
+		laptop.setNombre("Sony Notebook");
+		Producto smartphone = new Producto();
+		smartphone.setNombre("Apple iPod");
+		Flux<Producto> products = Flux.just(laptop, smartphone);
+		Model model = Mockito.mock(Model.class);
+		doReturn(products).when(service).findAllConNombreUpperCase();
+		doReturn(model).when(model).addAttribute("productos", products);
+		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
+
+		String response = productoController.listar(model);
+
+		Assert.assertEquals("listar", response);
+		verify(service).findAllConNombreUpperCase();
+		verify(model).addAttribute("productos", products);
+		verify(model).addAttribute("titulo", "Listado de productos");
+	}
+
+	@Test
+	public void createWhenFindProductByIdDoesNotExistsThenMustCreateNewProductAndThrowExceptionAndReturnMonoWithARedirectTest() {
+		Model model = Mockito.mock(Model.class);
+		doReturn(model).when(model).addAttribute(Mockito.eq("producto"), Mockito.any());
+		doReturn(model).when(model).addAttribute("titulo", "Formulario de producto");
+		doReturn(model).when(model).addAttribute("boton", "Crear");
+
+		StepVerifier.create(productoController.crear(model))
+		.expectNextMatches(expected -> "form".equals(expected))
+		.expectComplete()
+		.verify();
+
+		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any());
+		verify(model).addAttribute("titulo", "Formulario de producto");
+		verify(model).addAttribute("boton", "Crear");
 	}
 }
