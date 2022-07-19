@@ -1,5 +1,6 @@
 package com.bolsadeideas.springboot.webflux.app.controllers;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -20,7 +21,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.support.SessionStatus;
 
 import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
@@ -261,5 +265,90 @@ public class ProductoControllerTest {
 		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any()); // Return MonoDefaultIfEmpty
 		verify(model).addAttribute("titulo", "Editar Producto");
 		verify(model).addAttribute("boton", "Editar");
+	}
+
+	@Test
+	public void editV2WhenFindProductByIdThenMustSetProductAndTitleAndButtonAndReturnMonoStringTest() {
+		Producto product = new Producto();
+		product.setId("id");
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		Model model = Mockito.mock(Model.class);
+		doReturn(Mono.just(product)).when(service).findById(id);
+		doReturn(model).when(model).addAttribute("producto", product);
+		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
+		doReturn(model).when(model).addAttribute("boton", "Editar");
+
+		StepVerifier.create(productoController.editarV2(id, model))
+		.expectNextMatches(expected -> "form".equals(expected))
+		.expectComplete()
+		.verify();
+
+		verify(service).findById(id);
+		verify(model).addAttribute("producto", product);
+		verify(model).addAttribute("titulo", "Editar Producto");
+		verify(model).addAttribute("boton", "Editar");
+	}
+
+	@Test
+	public void editV2WhenFindProductByIdDoesNotExistsThenMustSetNewProductAndTitleAndButtonAndReturnMonoStringTest() {
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		Model model = Mockito.mock(Model.class);
+		doReturn(Mono.empty()).when(service).findById(id);
+
+		StepVerifier.create(productoController.editarV2(id, model))
+		.expectNextMatches(redirectExpected -> "redirect:/listar?error=no+existe+el+producto".equals(redirectExpected))
+		.expectComplete()
+		.verify();
+
+		verify(service).findById(id);
+		verify(model, Mockito.never()).addAttribute(Mockito.anyString(), Mockito.any());
+	}
+
+	@Test
+	public void saveWhenBindingResultHasErrorsThenMustSetTitleAndButtonAndReturnMonoStringTest() {
+		BindingResult result = Mockito.mock(BindingResult.class);
+		Model model = Mockito.mock(Model.class);
+		doReturn(true).when(result).hasErrors();
+		doReturn(model).when(model).addAttribute("titulo", "Errores en formulario producto");
+		doReturn(model).when(model).addAttribute("botton", "Guardar");
+		
+		StepVerifier.create(productoController.guardar(null, result, model, null, null))
+		.expectNextMatches(expected -> "form".equals(expected))
+		.expectComplete()
+		.verify();
+
+		verify(result).hasErrors();
+		verify(model).addAttribute("titulo", "Errores en formulario producto");
+		verify(model).addAttribute("botton", "Guardar");	
+	}
+
+	@Test
+	public void saveWhenResultHasNotErrorsAndFindCategoriaByIdHasElementAndProductCreateAtIsNullThenMustReturnRedirectWithProductCreateAtTest() {
+		BindingResult result = Mockito.mock(BindingResult.class);
+		SessionStatus status = Mockito.mock(SessionStatus.class);
+		Producto product = new Producto();
+		Categoria category = new Categoria();
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		category.setId(id);
+		product.setCategoria(category);
+		FilePart file = Mockito.mock(FilePart.class);
+		Model model = Mockito.mock(Model.class);
+		doReturn(false).when(result).hasErrors();
+		doNothing().when(status).setComplete();
+		doReturn(Mono.just(category)).when(service).findCategoriaById(id);
+		doReturn("").when(file).filename();
+		doReturn(Mono.just(product)).when(service).save(product);
+		
+		StepVerifier.create(productoController.guardar(product, result, model, file, status))
+		.expectNextMatches(redirectExpected -> "redirect:/listar?success=producto+guardado+con+exito".equals(redirectExpected))
+		.expectComplete()
+		.verify();
+
+		Assertions.assertNotNull(product.getCreateAt());
+		verify(result).hasErrors();
+		verify(status).setComplete();
+		verify(service).findCategoriaById(id);
+		verify(file, Mockito.times(2)).filename();
+		verify(service).save(product);
 	}
 }

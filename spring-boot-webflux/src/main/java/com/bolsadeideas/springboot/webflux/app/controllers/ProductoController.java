@@ -112,9 +112,9 @@ public class ProductoController {
 		return service.findById(id)
 				.doOnNext(producto -> {
 					logger.info("Producto: " + producto.getNombre());
-					model.addAttribute("boton", "Editar");
-					model.addAttribute("titulo", "Editar Producto");
 					model.addAttribute("producto", producto);
+					model.addAttribute("titulo", "Editar Producto");
+					model.addAttribute("boton", "Editar");
 				}).defaultIfEmpty(new Producto())
 				.flatMap(producto -> {
 					if (producto.getId() == null) {
@@ -135,20 +135,19 @@ public class ProductoController {
 			return Mono.just("form");
 		} else {			
 			status.setComplete();
-			Mono<Categoria> categoria = service.findCategoriaById(producto.getCategoria().getId());
-			return categoria.flatMap(category -> {
-				if (producto.getCreateAt() == null) {
-					producto.setCreateAt(new Date());
-				}
-				if (!file.filename().isEmpty()) {
-					producto.setFoto(UUID.randomUUID().toString() + "-" + file.filename()
-						.replace(" ", "")
-						.replace(":", "")
-						.replace("\\", "")
-					);
-				}
-				producto.setCategoria(category);
-				return service.save(producto);
+			return service.findCategoriaById(producto.getCategoria().getId())
+					.flatMap(category -> {
+						if (producto.getCreateAt() == null)
+							producto.setCreateAt(new Date());
+						
+						if (!file.filename().isEmpty()) {
+							producto.setFoto(UUID.randomUUID().toString() + "-" + file.filename()
+								.replace(" ", "")
+								.replace(":", "")
+								.replace("\\", "")
+							);
+						}
+						return service.save(producto);
 			}).doOnNext(product -> {
 				logger.info("Categoria asignada: " + product.getCategoria().getNombre() + " Id Cat: " + product.getCategoria().getId());
 				logger.info("Producto guardado: " + product.getNombre() + " Id: " + product.getId());
