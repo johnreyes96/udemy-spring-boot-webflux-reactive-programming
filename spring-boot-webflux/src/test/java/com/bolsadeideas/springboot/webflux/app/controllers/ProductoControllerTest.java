@@ -96,12 +96,12 @@ public class ProductoControllerTest {
 
 	@Test
 	public void viewPhotoWhenResourceThrowAnExceptionThenMustReturnMalformedURLExceptionTest() throws MalformedURLException {
-		Path rute = Mockito.mock(Path.class);
+		Path route = Mockito.mock(Path.class);
 		String photoName = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2-SonyCamaraHDDigital";
-		doReturn(rute).when(productController).getPath();
-		doReturn(rute).when(rute).resolve(photoName);
-		doReturn(rute).when(rute).toAbsolutePath();
-		doThrow(new MalformedURLException()).when(productController).getResource(rute);
+		doReturn(route).when(productController).getPath();
+		doReturn(route).when(route).resolve(photoName);
+		doReturn(route).when(route).toAbsolutePath();
+		doThrow(new MalformedURLException()).when(productController).getResource(route);
 		
 		Assertions.assertThrows(
 				MalformedURLException.class,
@@ -109,23 +109,23 @@ public class ProductoControllerTest {
 	    );
 
 		verify(productController).getPath();
-		verify(rute).resolve(photoName);
-		verify(rute).toAbsolutePath();
-		verify(productController).getResource(rute);
+		verify(route).resolve(photoName);
+		verify(route).toAbsolutePath();
+		verify(productController).getResource(route);
 	}
 
 	@Test
 	public void viewPhotoWhenResourceIsValidThenMustReturnResponseEntityOKWithImageInBodyTest() throws MalformedURLException {
-		Path rute = Mockito.mock(Path.class);
+		Path route = Mockito.mock(Path.class);
 		String photoName = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2-SonyCamaraHDDigital";
 		Resource image = Mockito.mock(Resource.class);
 		ResponseEntity<Resource> resourceExpected = ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFilename() + "\"")
 				.body(image);
-		doReturn(rute).when(productController).getPath();
-		doReturn(rute).when(rute).resolve(photoName);
-		doReturn(rute).when(rute).toAbsolutePath();
-		doReturn(image).when(productController).getResource(rute);
+		doReturn(route).when(productController).getPath();
+		doReturn(route).when(route).resolve(photoName);
+		doReturn(route).when(route).toAbsolutePath();
+		doReturn(image).when(productController).getResource(route);
 		
 		StepVerifier.create(productController.verFoto(photoName))
 		.expectNext(resourceExpected)
@@ -133,9 +133,9 @@ public class ProductoControllerTest {
 		.verify();
 
 		verify(productController).getPath();
-		verify(rute).resolve(photoName);
-		verify(rute).toAbsolutePath();
-		verify(productController).getResource(rute);
+		verify(route).resolve(photoName);
+		verify(route).toAbsolutePath();
+		verify(productController).getResource(route);
 	}
 
 	@Test
@@ -568,13 +568,13 @@ public class ProductoControllerTest {
 
 	@Test
 	public void getResourceWhenPathToUriHasErrorThenMustReturnAnExceptionTest() {
-		Path rute = Mockito.mock(Path.class);
+		Path route = Mockito.mock(Path.class);
 		
 		Assertions.assertThrows(
 				IllegalArgumentException.class,
-				() -> productController.getResource(rute)
+				() -> productController.getResource(route)
 		);
 		
-		verify(rute).toUri();
+		verify(route).toUri();
 	}
 }
