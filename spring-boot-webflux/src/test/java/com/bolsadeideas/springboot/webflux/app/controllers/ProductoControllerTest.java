@@ -439,7 +439,6 @@ public class ProductoControllerTest {
 
 	@Test
 	public void deleteWhenFindByIdHasNotElementThenMustNotDeleteProductAndReturnRedirectTest() {
-		Producto product = new Producto();
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		doReturn(Mono.empty()).when(service).findById(id);
 		
