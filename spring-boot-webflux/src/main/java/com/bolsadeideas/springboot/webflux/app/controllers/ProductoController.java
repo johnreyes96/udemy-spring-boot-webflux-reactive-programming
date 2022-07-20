@@ -171,8 +171,8 @@ public class ProductoController {
 					return Mono.just(producto);
 				})
 				.flatMap(producto -> {
-					logger.info("Eliminando producto: " + producto.getNombre());
 					logger.info("Eliminando producto Id: " + producto.getId());
+					logger.info("Eliminando producto: " + producto.getNombre());
 					return service.delete(producto);
 				})
 				.then(Mono.just("redirect:/listar?success=producto+eliminado+con+exito"))
