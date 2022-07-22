@@ -153,13 +153,13 @@ public class ProductoController {
 				logger.info("Producto guardado: " + product.getNombre() + " Id: " + product.getId());
 			}).flatMap(product -> {
 				if (!file.filename().isEmpty()) {
-					return file.transferTo(new File(path + product.getFoto()));
+					return file.transferTo(new File(getUploadPath() + "\\" + product.getFoto()));
 				}
 				return Mono.empty();
 			}).thenReturn("redirect:/listar?success=producto+guardado+con+exito");
 		}
 	}
-	
+
 	@GetMapping("/eliminar/{id}")
 	public Mono<String> eliminar(@PathVariable String id) {
 		return service.findById(id)
@@ -207,6 +207,10 @@ public class ProductoController {
 	
 	protected Resource getResource(Path ruta) throws MalformedURLException {
 		return new UrlResource(ruta.toUri());
+	}
+	
+	protected String getUploadPath() {
+		return new File(getPath().toUri()).getAbsolutePath();
 	}
 
 	protected Path getPath() {
