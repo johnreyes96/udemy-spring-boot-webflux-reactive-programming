@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Mono;
 
-import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
+import com.bolsadeideas.springboot.webflux.app.models.services.IProductService;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -28,7 +28,7 @@ class SpringBootWebfluxApplicationTests {
 	@InjectMocks
 	private SpringBootWebfluxApplication application;
 	@Mock
-	private IProductoService service;
+	private IProductService service;
 	@Mock
 	private ReactiveMongoTemplate mongoTemplate;
 
@@ -40,12 +40,12 @@ class SpringBootWebfluxApplicationTests {
 
 	@Test
 	public void populateDBWhenIsInvokedThenMustDropCollectionsTest() {
-		doReturn(Mono.empty()).when(service).saveCategoria(Mockito.any());
+		doReturn(Mono.empty()).when(service).saveCategory(Mockito.any());
 		doReturn(Mono.empty()).when(service).save(Mockito.any());
 		
 		application.populateDB();
 		
-		verify(service, Mockito.times(4)).saveCategoria(Mockito.any());
+		verify(service, Mockito.times(4)).saveCategory(Mockito.any());
 		verify(service, Mockito.times(9)).save(Mockito.any());
 	}
 

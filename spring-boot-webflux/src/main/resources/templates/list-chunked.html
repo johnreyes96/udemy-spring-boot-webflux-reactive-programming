@@ -16,11 +16,11 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="producto: ${productos}">
-				<td th:text="${producto.id}"></td >
-				<td th:text="${producto.nombre}"></td >
-				<td th:text="${producto.precio}"></td >
-				<td th:text="${producto.createAt}"></td >
+			<tr th:each="product: ${productos}">
+				<td th:text="${product.id}"></td >
+				<td th:text="${product.name}"></td >
+				<td th:text="${product.price}"></td >
+				<td th:text="${product.createAt}"></td >
 			</tr >
 		</tbody>
 	</table>

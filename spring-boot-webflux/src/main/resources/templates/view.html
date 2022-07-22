@@ -6,16 +6,16 @@
 </head>
 <body> 
 	<h1 th:text="${titulo}"></h1>
-	<a th:href="@{/listar}">Volver</a>
+	<a th:href="@{/list}">Volver</a>
 	<div>
 		<div>
-			<img th:if="${producto.foto != null && #strings.length(producto.foto) > 0}"
-				th:src="@{/uploads/img/} + ${producto.foto}" th:alt="${producto.nombre}" style="max-width: 25%;"/>
+			<img th:if="${producto.photo != null && #strings.length(producto.photo) > 0}"
+				th:src="@{/uploads/img/} + ${producto.photo}" th:alt="${producto.name}" style="max-width: 25%;"/>
 		</div>
 		<ul>
-			<li th:text="${producto.nombre}"></li>
+			<li th:text="${producto.name}"></li>
 			<li th:text="'Id: ' + ${producto.id}"></li>
-			<li th:text="'Precio: ' + ${#numbers.formatCurrency(producto.precio)}"></li>
+			<li th:text="'Precio: ' + ${#numbers.formatCurrency(producto.price)}"></li>
 			<li th:text="'Fecha: ' + ${#calendars.format(producto.createAt, 'dd/MM/yyyy')}"></li>
 		</ul>
 	</div>

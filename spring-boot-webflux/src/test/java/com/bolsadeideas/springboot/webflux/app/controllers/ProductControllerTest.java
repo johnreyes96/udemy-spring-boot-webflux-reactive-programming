@@ -27,9 +27,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
-import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
-import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
+import com.bolsadeideas.springboot.webflux.app.models.documents.Category;
+import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
+import com.bolsadeideas.springboot.webflux.app.models.services.IProductService;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -37,110 +37,110 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @ComponentScan(basePackages = "com.bolsadeideas.springboot.webflux.app.controllers")
-public class ProductoControllerTest {
+public class ProductControllerTest {
 
 	@Spy
 	@InjectMocks
-	private ProductoController productController;
+	private ProductController productController;
 	@Mock
-	private IProductoService service;
+	private IProductService service;
 
 	@BeforeEach
 	void init() {
-		productController = new ProductoController();
+		productController = new ProductController();
 		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
-	public void indexWhenFindAllReturnZeroElementsThenMustReturnFluxEmptyTest() {
-		doReturn(Flux.empty()).when(service).findAllCategoria();
+	public void categoriesWhenFindAllReturnZeroElementsThenMustReturnFluxEmptyTest() {
+		doReturn(Flux.empty()).when(service).findAllCategories();
 
-		StepVerifier.create(productController.cagetorias())
+		StepVerifier.create(productController.categories())
 		.expectNextCount(0)
 		.expectComplete()
 		.verify();
 
-		verify(service).findAllCategoria();
+		verify(service).findAllCategories();
 	}
 
 	@Test
-	public void indexWhenFindAllReturnOneElementThenMustReturnFluxWithOneCategoryTest() {
-		Categoria category = new Categoria();
-		category.setNombre("Deporte");
-		doReturn(Flux.just(category)).when(service).findAllCategoria();
+	public void categoriesWhenFindAllReturnOneElementThenMustReturnFluxWithOneCategoryTest() {
+		Category category = new Category();
+		category.setName("Deporte");
+		doReturn(Flux.just(category)).when(service).findAllCategories();
 
-		StepVerifier.create(productController.cagetorias())
-		.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getNombre()))
+		StepVerifier.create(productController.categories())
+		.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getName()))
 		.expectComplete()
 		.verify();
 
-		verify(service).findAllCategoria();
+		verify(service).findAllCategories();
 	}
 
 	@Test
-	public void indexWhenFindAllReturnElementsThenMustReturnFluxWithCategoriesTest() {
-		Categoria sport = new Categoria();
-		sport.setNombre("Deporte");
-		Categoria furniture = new Categoria();
-		furniture.setNombre("Muebles");
-		doReturn(Flux.just(sport, furniture)).when(service).findAllCategoria();
+	public void categoriesWhenFindAllReturnElementsThenMustReturnFluxWithCategoriesTest() {
+		Category sport = new Category();
+		sport.setName("Deporte");
+		Category furniture = new Category();
+		furniture.setName("Muebles");
+		doReturn(Flux.just(sport, furniture)).when(service).findAllCategories();
 
-		StepVerifier.create(productController.cagetorias())
-		.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getNombre()))
-		.expectNextMatches(categoryExpected -> "Muebles".equals(categoryExpected.getNombre()))
+		StepVerifier.create(productController.categories())
+		.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getName()))
+		.expectNextMatches(categoryExpected -> "Muebles".equals(categoryExpected.getName()))
 		.expectComplete()
 		.verify();
 
-		verify(service).findAllCategoria();
+		verify(service).findAllCategories();
 	}
 
 	@Test
 	public void viewPhotoWhenResourceThrowAnExceptionThenMustReturnMalformedURLExceptionTest() throws MalformedURLException {
-		Path route = Mockito.mock(Path.class);
+		Path path = Mockito.mock(Path.class);
 		String photoName = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2-SonyCamaraHDDigital";
-		doReturn(route).when(productController).getPath();
-		doReturn(route).when(route).resolve(photoName);
-		doReturn(route).when(route).toAbsolutePath();
-		doThrow(new MalformedURLException()).when(productController).getResource(route);
+		doReturn(path).when(productController).getPath();
+		doReturn(path).when(path).resolve(photoName);
+		doReturn(path).when(path).toAbsolutePath();
+		doThrow(new MalformedURLException()).when(productController).getResource(path);
 		
 		Assertions.assertThrows(
 				MalformedURLException.class,
-	           () -> productController.verFoto(photoName)
+	           () -> productController.viewPhoto(photoName)
 	    );
 
 		verify(productController).getPath();
-		verify(route).resolve(photoName);
-		verify(route).toAbsolutePath();
-		verify(productController).getResource(route);
+		verify(path).resolve(photoName);
+		verify(path).toAbsolutePath();
+		verify(productController).getResource(path);
 	}
 
 	@Test
 	public void viewPhotoWhenResourceIsValidThenMustReturnResponseEntityOKWithImageInBodyTest() throws MalformedURLException {
-		Path route = Mockito.mock(Path.class);
+		Path path = Mockito.mock(Path.class);
 		String photoName = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2-SonyCamaraHDDigital";
 		Resource image = Mockito.mock(Resource.class);
 		ResponseEntity<Resource> resourceExpected = ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFilename() + "\"")
 				.body(image);
-		doReturn(route).when(productController).getPath();
-		doReturn(route).when(route).resolve(photoName);
-		doReturn(route).when(route).toAbsolutePath();
-		doReturn(image).when(productController).getResource(route);
+		doReturn(path).when(productController).getPath();
+		doReturn(path).when(path).resolve(photoName);
+		doReturn(path).when(path).toAbsolutePath();
+		doReturn(image).when(productController).getResource(path);
 		
-		StepVerifier.create(productController.verFoto(photoName))
+		StepVerifier.create(productController.viewPhoto(photoName))
 		.expectNext(resourceExpected)
 		.expectComplete()
 		.verify();
 
 		verify(productController).getPath();
-		verify(route).resolve(photoName);
-		verify(route).toAbsolutePath();
-		verify(productController).getResource(route);
+		verify(path).resolve(photoName);
+		verify(path).toAbsolutePath();
+		verify(productController).getResource(path);
 	}
 
 	@Test
 	public void viewWhenFindProductByIdThenMustSetProductAndTitleAndReturnMonoStringTest() {
-		Producto product = new Producto();
+		Product product = new Product();
 		product.setId("id");
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
@@ -148,8 +148,8 @@ public class ProductoControllerTest {
 		doReturn(model).when(model).addAttribute("producto", product);
 		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
 
-		StepVerifier.create(productController.ver(model, id))
-		.expectNextMatches(expected -> "ver".equals(expected))
+		StepVerifier.create(productController.view(model, id))
+		.expectNextMatches(expected -> "view".equals(expected))
 		.expectComplete()
 		.verify();
 
@@ -164,8 +164,8 @@ public class ProductoControllerTest {
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.empty()).when(service).findById(id);
 
-		StepVerifier.create(productController.ver(model, id))
-		.expectNextMatches(redirectExpected -> "redirect:/listar?error=no+existe+el+producto".equals(redirectExpected))
+		StepVerifier.create(productController.view(model, id))
+		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto".equals(redirectExpected))
 		.expectComplete()
 		.verify();
 
@@ -175,36 +175,36 @@ public class ProductoControllerTest {
 
 	@Test
 	public void listWhenFindAllWithNameUpperCaseReturnEmptyThenMustSetFluxEmptyAndTitleAndReturnStringTest() {
-		Flux<Producto> products = Flux.empty();
+		Flux<Product> products = Flux.empty();
 		Model model = Mockito.mock(Model.class);
-		doReturn(products).when(service).findAllConNombreUpperCase();
+		doReturn(products).when(service).findAllWithNameUpperCase();
 		doReturn(model).when(model).addAttribute("productos", products);
 		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
 
-		String response = productController.listar(model);
+		String response = productController.list(model);
 
-		Assert.assertEquals("listar", response);
-		verify(service).findAllConNombreUpperCase();
+		Assert.assertEquals("list", response);
+		verify(service).findAllWithNameUpperCase();
 		verify(model).addAttribute("productos", products);
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}
 
 	@Test
 	public void listWhenFindAllWithNameUpperCaseReturnElementsThenMustSetProductsAndTitleAndReturnStringTest() {
-		Producto laptop = new Producto();
-		laptop.setNombre("Sony Notebook");
-		Producto smartphone = new Producto();
-		smartphone.setNombre("Apple iPod");
-		Flux<Producto> products = Flux.just(laptop, smartphone);
+		Product laptop = new Product();
+		laptop.setName("Sony Notebook");
+		Product smartphone = new Product();
+		smartphone.setName("Apple iPod");
+		Flux<Product> products = Flux.just(laptop, smartphone);
 		Model model = Mockito.mock(Model.class);
-		doReturn(products).when(service).findAllConNombreUpperCase();
+		doReturn(products).when(service).findAllWithNameUpperCase();
 		doReturn(model).when(model).addAttribute("productos", products);
 		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
 
-		String response = productController.listar(model);
+		String response = productController.list(model);
 
-		Assert.assertEquals("listar", response);
-		verify(service).findAllConNombreUpperCase();
+		Assert.assertEquals("list", response);
+		verify(service).findAllWithNameUpperCase();
 		verify(model).addAttribute("productos", products);
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}
@@ -212,16 +212,16 @@ public class ProductoControllerTest {
 	@Test
 	public void createMustSetNewProductAndTitleAndNameButtonAndReturnStringTest() {
 		Model model = Mockito.mock(Model.class);
-		doReturn(model).when(model).addAttribute(Mockito.eq("producto"), Mockito.any(Producto.class));
+		doReturn(model).when(model).addAttribute(Mockito.eq("producto"), Mockito.any(Product.class));
 		doReturn(model).when(model).addAttribute("titulo", "Formulario de producto");
 		doReturn(model).when(model).addAttribute("boton", "Crear");
 
-		StepVerifier.create(productController.crear(model))
+		StepVerifier.create(productController.create(model))
 		.expectNextMatches(expected -> "form".equals(expected))
 		.expectComplete()
 		.verify();
 
-		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any(Producto.class));
+		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any(Product.class));
 		verify(model).addAttribute("titulo", "Formulario de producto");
 		verify(model).addAttribute("boton", "Crear");
 	}
@@ -230,14 +230,14 @@ public class ProductoControllerTest {
 	public void editWhenFindProductByIdThenMustSetProductAndTitleAndButtonAndReturnMonoStringTest() {
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
-		Producto producto = new Producto();
-		Mono<Producto> product = Mono.just(producto);
-		doReturn(product).when(service).findById(id);
-		doReturn(model).when(model).addAttribute("producto", product);
+		Product product = new Product();
+		Mono<Product> productMono = Mono.just(product);
+		doReturn(productMono).when(service).findById(id);
+		doReturn(model).when(model).addAttribute("producto", productMono);
 		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
 		doReturn(model).when(model).addAttribute("boton", "Editar");
 
-		StepVerifier.create(productController.editar(id, model))
+		StepVerifier.create(productController.edit(id, model))
 		.expectNextMatches(expected -> "form".equals(expected))
 		.expectComplete()
 		.verify();
@@ -252,13 +252,13 @@ public class ProductoControllerTest {
 	public void editWhenFindProductByIdDoesNotExistsThenMustSetNewProductAndTitleAndButtonAndReturnMonoStringTest() {
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
-		Mono<Producto> product = Mono.empty();
+		Mono<Product> product = Mono.empty();
 		doReturn(product).when(service).findById(id);
 		doReturn(model).when(model).addAttribute("producto", product);
 		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
 		doReturn(model).when(model).addAttribute("boton", "Editar");
 
-		StepVerifier.create(productController.editar(id, model))
+		StepVerifier.create(productController.edit(id, model))
 		.expectNextMatches(expected -> "form".equals(expected))
 		.expectComplete()
 		.verify();
@@ -271,9 +271,9 @@ public class ProductoControllerTest {
 
 	@Test
 	public void editV2WhenFindProductByIdThenMustSetProductAndTitleAndButtonAndReturnMonoStringTest() {
-		Producto product = new Producto();
+		Product product = new Product();
 		product.setId("id");
-		product.setNombre("TV Panasonic Pantalla LCD");
+		product.setName("TV Panasonic Pantalla LCD");
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.just(product)).when(service).findById(id);
@@ -281,7 +281,7 @@ public class ProductoControllerTest {
 		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
 		doReturn(model).when(model).addAttribute("boton", "Editar");
 
-		StepVerifier.create(productController.editarV2(id, model))
+		StepVerifier.create(productController.editV2(id, model))
 		.expectNextMatches(expected -> "form".equals(expected))
 		.expectComplete()
 		.verify();
@@ -298,8 +298,8 @@ public class ProductoControllerTest {
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.empty()).when(service).findById(id);
 
-		StepVerifier.create(productController.editarV2(id, model))
-		.expectNextMatches(redirectExpected -> "redirect:/listar?error=no+existe+el+producto".equals(redirectExpected))
+		StepVerifier.create(productController.editV2(id, model))
+		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto".equals(redirectExpected))
 		.expectComplete()
 		.verify();
 
@@ -317,7 +317,7 @@ public class ProductoControllerTest {
 		doReturn(model).when(model).addAttribute("titulo", "Errores en formulario producto");
 		doReturn(model).when(model).addAttribute("botton", "Guardar");
 		
-		StepVerifier.create(productController.guardar(null, result, model, null, null))
+		StepVerifier.create(productController.save(null, result, model, null, null))
 		.expectNextMatches(expected -> "form".equals(expected))
 		.expectComplete()
 		.verify();
@@ -327,9 +327,9 @@ public class ProductoControllerTest {
 		verify(model).addAttribute("botton", "Guardar");	
 		verify(result).hasErrors();
 		verify(status, Mockito.never()).setComplete();
-		verify(service, Mockito.never()).findCategoriaById(Mockito.anyString());
+		verify(service, Mockito.never()).findCategoryById(Mockito.anyString());
 		verify(file, Mockito.never()).filename();
-		verify(service, Mockito.never()).save(Mockito.any(Producto.class));
+		verify(service, Mockito.never()).save(Mockito.any(Product.class));
 		verify(file, Mockito.never()).transferTo(Mockito.any(File.class));
 	}
 
@@ -337,27 +337,27 @@ public class ProductoControllerTest {
 	public void saveWhenResultHasNotErrorsAndFindCategoriaByIdHasNotElementThenMustReturnRedirectTest() {
 		BindingResult result = Mockito.mock(BindingResult.class);
 		SessionStatus status = Mockito.mock(SessionStatus.class);
-		Producto product = new Producto();
-		Categoria category = new Categoria();
+		Product product = new Product();
+		Category category = new Category();
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		category.setId(id);
-		product.setCategoria(category);
+		product.setCategory(category);
 		FilePart file = Mockito.mock(FilePart.class);
 		Model model = Mockito.mock(Model.class);
 		doReturn(false).when(result).hasErrors();
 		doNothing().when(status).setComplete();
-		doReturn(Mono.empty()).when(service).findCategoriaById(id);
+		doReturn(Mono.empty()).when(service).findCategoryById(id);
 		
-		StepVerifier.create(productController.guardar(product, result, model, file, status))
-		.expectNextMatches(redirectExpected -> "redirect:/listar?success=producto+guardado+con+exito".equals(redirectExpected))
+		StepVerifier.create(productController.save(product, result, model, file, status))
+		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito".equals(redirectExpected))
 		.expectComplete()
 		.verify();
 
 		verify(result).hasErrors();
 		verify(status).setComplete();
-		verify(service).findCategoriaById(id);
+		verify(service).findCategoryById(id);
 		verify(file, Mockito.never()).filename();
-		verify(service, Mockito.never()).save(Mockito.any(Producto.class));
+		verify(service, Mockito.never()).save(Mockito.any(Product.class));
 		verify(file, Mockito.never()).transferTo(Mockito.any(File.class));
 	}
 
@@ -365,25 +365,25 @@ public class ProductoControllerTest {
 	public void saveWhenResultHasNotErrorsAndFindCategoriaByIdHasElementAndProductCreateAtIsNullThenMustReturnRedirectWithProductCreateAtTest() {
 		BindingResult result = Mockito.mock(BindingResult.class);
 		SessionStatus status = Mockito.mock(SessionStatus.class);
-		Producto product = new Producto();
-		Categoria category = new Categoria();
+		Product product = new Product();
+		Category category = new Category();
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		category.setId(id);
-		category.setNombre("Deporte");
-		product.setCategoria(category);
+		category.setName("Deporte");
+		product.setCategory(category);
 		product.setId("bce26c12-553e-4b20-a593-6dbc9d8dfdd2");
-		product.setNombre("Sony Camara HD Digital");
+		product.setName("Sony Camara HD Digital");
 		FilePart file = Mockito.mock(FilePart.class);
 		Model model = Mockito.mock(Model.class);
 		Date dateSmaller = new Date();
 		doReturn(false).when(result).hasErrors();
 		doNothing().when(status).setComplete();
-		doReturn(Mono.just(category)).when(service).findCategoriaById(id);
+		doReturn(Mono.just(category)).when(service).findCategoryById(id);
 		doReturn("").when(file).filename();
 		doReturn(Mono.just(product)).when(service).save(product);
 		
-		StepVerifier.create(productController.guardar(product, result, model, file, status))
-		.expectNextMatches(redirectExpected -> "redirect:/listar?success=producto+guardado+con+exito".equals(redirectExpected))
+		StepVerifier.create(productController.save(product, result, model, file, status))
+		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito".equals(redirectExpected))
 		.expectComplete()
 		.verify();
 
@@ -392,7 +392,7 @@ public class ProductoControllerTest {
 		Assertions.assertTrue(product.getCreateAt().getTime() < DateUtil.now().getTime());
 		verify(result).hasErrors();
 		verify(status).setComplete();
-		verify(service).findCategoriaById(id);
+		verify(service).findCategoryById(id);
 		verify(file, Mockito.atLeastOnce()).filename();
 		verify(service).save(product);
 		verify(file, Mockito.never()).transferTo(Mockito.any(File.class));
@@ -402,39 +402,41 @@ public class ProductoControllerTest {
 	public void saveWhenResultHasNotErrorsAndFindCategoriaByIdHasElementAndFilenameIsNotEmptyThenMustReturnRedirectWithPhotoSettedTest() {
 		BindingResult result = Mockito.mock(BindingResult.class);
 		SessionStatus status = Mockito.mock(SessionStatus.class);
-		Producto product = new Producto();
-		Categoria category = new Categoria();
+		Product product = new Product();
+		Category category = new Category();
 		Date createAt = new Date();
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		category.setId(id);
-		category.setNombre("Deporte");
-		product.setCategoria(category);
+		category.setName("Deporte");
+		product.setCategory(category);
 		product.setId("bce26c12-553e-4b20-a593-6dbc9d8dfdd2");
-		product.setNombre("Sony Camara HD Digital");
+		product.setName("Sony Camara HD Digital");
 		product.setCreateAt(createAt);
 		FilePart file = Mockito.mock(FilePart.class);
 		Model model = Mockito.mock(Model.class);
 		doReturn(false).when(result).hasErrors();
 		doNothing().when(status).setComplete();
-		doReturn(Mono.just(category)).when(service).findCategoriaById(id);
+		doReturn(Mono.just(category)).when(service).findCategoryById(id);
 		doReturn("filename").when(file).filename();
 		doReturn(Mono.just(product)).when(service).save(product);
 		doReturn(Mono.empty()).when(file).transferTo(Mockito.any(File.class));
+		doReturn("").when(productController).getUploadPath();
 		
-		StepVerifier.create(productController.guardar(product, result, model, file, status))
-		.expectNextMatches(redirectExpected -> "redirect:/listar?success=producto+guardado+con+exito".equals(redirectExpected))
+		StepVerifier.create(productController.save(product, result, model, file, status))
+		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito".equals(redirectExpected))
 		.expectComplete()
 		.verify();
 
 		Assertions.assertNotNull(product.getCreateAt());
 		Assertions.assertEquals(createAt, product.getCreateAt());
-		Assertions.assertTrue(product.getFoto().contains("-filename"));
+		Assertions.assertTrue(product.getPhoto().contains("-filename"));
 		verify(result).hasErrors();
 		verify(status).setComplete();
-		verify(service).findCategoriaById(id);
+		verify(service).findCategoryById(id);
 		verify(file, Mockito.atLeastOnce()).filename();
 		verify(service).save(product);
 		verify(file).transferTo(Mockito.any(File.class));
+		verify(productController).getUploadPath();
 	}
 
 	@Test
@@ -442,26 +444,26 @@ public class ProductoControllerTest {
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		doReturn(Mono.empty()).when(service).findById(id);
 		
-		StepVerifier.create(productController.eliminar(id))
-		.expectNextMatches(redirectExpected -> "redirect:/listar?error=no+existe+el+producto+a+eliminar".equals(redirectExpected))
+		StepVerifier.create(productController.delete(id))
+		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto+a+eliminar".equals(redirectExpected))
 		.expectComplete()
 		.verify();
 
 		verify(service).findById(id);
-		verify(service, Mockito.never()).delete(Mockito.any(Producto.class));
+		verify(service, Mockito.never()).delete(Mockito.any(Product.class));
 	}
 
 	@Test
 	public void deleteWhenFindByIdHasElementThenMustDeleteProductAndReturnRedirectTest() {
-		Producto product = new Producto();
+		Product product = new Product();
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		product.setId(id);
-		product.setNombre("Hewlett Packard Multifuncional");
+		product.setName("Hewlett Packard Multifuncional");
 		doReturn(Mono.just(product)).when(service).findById(id);
 		doReturn(Mono.empty()).when(service).delete(product);
 		
-		StepVerifier.create(productController.eliminar(id))
-		.expectNextMatches(redirectExpected -> "redirect:/listar?success=producto+eliminado+con+exito".equals(redirectExpected))
+		StepVerifier.create(productController.delete(id))
+		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+eliminado+con+exito".equals(redirectExpected))
 		.expectComplete()
 		.verify();
 
@@ -472,96 +474,96 @@ public class ProductoControllerTest {
 	@Test
 	public void listDataDriverWhenFindAllWithNameUpperCaseHasNotElementsThenMustSetProductsAndTitleAndReturnMonoStringTest() {
 		Model model = Mockito.mock(Model.class);
-		doReturn(Flux.empty()).when(service).findAllConNombreUpperCase();
+		doReturn(Flux.empty()).when(service).findAllWithNameUpperCase();
 		doReturn(model).when(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
 		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
 		
-		String result = productController.listarDataDriver(model);
+		String result = productController.listDataDriver(model);
 
-		Assertions.assertEquals("listar", result);
-		verify(service).findAllConNombreUpperCase();
+		Assertions.assertEquals("list", result);
+		verify(service).findAllWithNameUpperCase();
 		verify(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}
 
 	@Test
 	public void listDataDriverWhenFindAllWithNameUpperCaseThenMustSetProductsAndTitleAndReturnMonoStringTest() {
-		Producto product = new Producto();
+		Product product = new Product();
 		Model model = Mockito.mock(Model.class);
-		doReturn(Flux.just(product)).when(service).findAllConNombreUpperCase();
+		doReturn(Flux.just(product)).when(service).findAllWithNameUpperCase();
 		doReturn(model).when(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
 		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
 		
-		String result = productController.listarDataDriver(model);
+		String result = productController.listDataDriver(model);
 
-		Assertions.assertEquals("listar", result);
-		verify(service).findAllConNombreUpperCase();
+		Assertions.assertEquals("list", result);
+		verify(service).findAllWithNameUpperCase();
 		verify(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}
 
 	@Test
 	public void listFullWhenFindAllWithNameUpperCaseRepeatHasNotElementsThenMustSetProductsAndTitleAndReturnMonoStringTest() {
-		Flux<Producto> products = Flux.empty();
+		Flux<Product> products = Flux.empty();
 		Model model = Mockito.mock(Model.class);
-		doReturn(products).when(service).findAllConNombreUpperCaseRepeat();
+		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
 		doReturn(model).when(model).addAttribute("productos", products);
 		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
 		
-		String result = productController.listarFull(model);
+		String result = productController.listFull(model);
 
-		Assertions.assertEquals("listar", result);
-		verify(service).findAllConNombreUpperCaseRepeat();
+		Assertions.assertEquals("list", result);
+		verify(service).findAllWithNameUpperCaseRepeat();
 		verify(model).addAttribute("productos", products);
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}
 
 	@Test
 	public void listFullWhenFindAllWithNameUpperCaseRepeatThenMustSetProductsAndTitleAndReturnMonoStringTest() {
-		Producto product = new Producto();
-		Flux<Producto> products = Flux.just(product);
+		Product product = new Product();
+		Flux<Product> products = Flux.just(product);
 		Model model = Mockito.mock(Model.class);
-		doReturn(products).when(service).findAllConNombreUpperCaseRepeat();
+		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
 		doReturn(model).when(model).addAttribute("productos", products);
 		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
 		
-		String result = productController.listarFull(model);
+		String result = productController.listFull(model);
 
-		Assertions.assertEquals("listar", result);
-		verify(service).findAllConNombreUpperCaseRepeat();
+		Assertions.assertEquals("list", result);
+		verify(service).findAllWithNameUpperCaseRepeat();
 		verify(model).addAttribute("productos", products);
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}
 
 	@Test
 	public void listChunkedWhenFindAllWithNameUpperCaseRepeatHasNotElementsThenMustSetProductsAndTitleAndReturnMonoStringTest() {
-		Flux<Producto> products = Flux.empty();
+		Flux<Product> products = Flux.empty();
 		Model model = Mockito.mock(Model.class);
-		doReturn(products).when(service).findAllConNombreUpperCaseRepeat();
+		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
 		doReturn(model).when(model).addAttribute("productos", products);
 		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
 		
-		String result = productController.listarChunked(model);
+		String result = productController.listChunked(model);
 
-		Assertions.assertEquals("listar-chunked", result);
-		verify(service).findAllConNombreUpperCaseRepeat();
+		Assertions.assertEquals("list-chunked", result);
+		verify(service).findAllWithNameUpperCaseRepeat();
 		verify(model).addAttribute("productos", products);
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}
 
 	@Test
 	public void listChunkedWhenFindAllWithNameUpperCaseRepeatThenMustSetProductsAndTitleAndReturnMonoStringTest() {
-		Producto product = new Producto();
-		Flux<Producto> products = Flux.just(product);
+		Product product = new Product();
+		Flux<Product> products = Flux.just(product);
 		Model model = Mockito.mock(Model.class);
-		doReturn(products).when(service).findAllConNombreUpperCaseRepeat();
+		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
 		doReturn(model).when(model).addAttribute("productos", products);
 		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
 		
-		String result = productController.listarChunked(model);
+		String result = productController.listChunked(model);
 
-		Assertions.assertEquals("listar-chunked", result);
-		verify(service).findAllConNombreUpperCaseRepeat();
+		Assertions.assertEquals("list-chunked", result);
+		verify(service).findAllWithNameUpperCaseRepeat();
 		verify(model).addAttribute("productos", products);
 		verify(model).addAttribute("titulo", "Listado de productos");
 	}

@@ -11,8 +11,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import com.bolsadeideas.springboot.webflux.app.models.dao.IProductoDao;
-import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
+import com.bolsadeideas.springboot.webflux.app.models.dao.IProductDao;
+import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -22,13 +22,13 @@ public class ProductRestControllerTest {
 
 	@Spy
 	@InjectMocks
-	private ProductoRestController productRestController;
+	private ProductRestController productRestController;
 	@Mock
-	private IProductoDao productDao;
+	private IProductDao productDao;
 
 	@BeforeEach
 	void init() {
-		productRestController = new ProductoRestController();
+		productRestController = new ProductRestController();
 		MockitoAnnotations.openMocks(this);
 	}
 
@@ -46,12 +46,12 @@ public class ProductRestControllerTest {
 
 	@Test
 	public void indexWhenFindAllReturnOneElementThenMustReturnFluxWithOneProductWithNameUpperCaseTest() {
-		Producto product = new Producto();
-		product.setNombre("Sony Notebook");
+		Product product = new Product();
+		product.setName("Sony Notebook");
 		doReturn(Flux.just(product)).when(productDao).findAll();
 
 		StepVerifier.create(productRestController.index())
-		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getNombre()))
+		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
 		.expectComplete()
 		.verify();
 
@@ -60,15 +60,15 @@ public class ProductRestControllerTest {
 
 	@Test
 	public void indexWhenFindAllReturnElementsThenMustReturnFluxWithProductsWithNameUpperCaseTest() {
-		Producto laptop = new Producto();
-		laptop.setNombre("Sony Notebook");
-		Producto smartphone = new Producto();
-		smartphone.setNombre("Apple iPod");
+		Product laptop = new Product();
+		laptop.setName("Sony Notebook");
+		Product smartphone = new Product();
+		smartphone.setName("Apple iPod");
 		doReturn(Flux.just(laptop, smartphone)).when(productDao).findAll();
 
 		StepVerifier.create(productRestController.index())
-		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getNombre()))
-		.expectNextMatches(productExpected -> "APPLE IPOD".equals(productExpected.getNombre()))
+		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
+		.expectNextMatches(productExpected -> "APPLE IPOD".equals(productExpected.getName()))
 		.expectComplete()
 		.verify();
 
@@ -78,7 +78,7 @@ public class ProductRestControllerTest {
 	@Test
 	public void showWhenFindByIdReturnElementThenMustReturnMonoWithProductTest() {
 		String id = "62d249977dacbc5b8ab52014";
-		Producto product = new Producto();
+		Product product = new Product();
 		product.setId(id);
 		doReturn(Mono.just(product)).when(productDao).findById(id);
 

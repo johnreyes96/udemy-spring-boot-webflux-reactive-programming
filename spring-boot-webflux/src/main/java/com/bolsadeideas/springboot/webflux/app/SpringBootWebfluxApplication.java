@@ -10,18 +10,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import reactor.core.publisher.Flux;
 
-import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
-import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
-import com.bolsadeideas.springboot.webflux.app.models.services.IProductoService;
+import com.bolsadeideas.springboot.webflux.app.models.documents.Category;
+import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
+import com.bolsadeideas.springboot.webflux.app.models.services.IProductService;
 
 @SpringBootApplication
 public class SpringBootWebfluxApplication implements CommandLineRunner {
 
 	@Autowired
-	private IProductoService service;
+	private IProductService service;
 	@Autowired
 	private ReactiveMongoTemplate mongoTemplate;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(SpringBootWebfluxApplication.class);
 
 	public static void main(String[] args) {
@@ -35,30 +35,28 @@ public class SpringBootWebfluxApplication implements CommandLineRunner {
 	}
 
 	protected void populateDB() {
-		Categoria electronico = new Categoria("Electrónico");
-		Categoria deporte = new Categoria("Deporte");
-		Categoria computacion = new Categoria("Computación");
-		Categoria muebles = new Categoria("Muebles");
-		
-		Flux.just(electronico, deporte, computacion, muebles)
-		.flatMap(service::saveCategoria)
-		.doOnNext(this::printCategoryCreated)
-		.thenMany(
-			Flux.just(new Producto("TV Panasonic Pantalla LCD", 456.89, electronico),
-					new Producto("Sony Camara HD Digital", 177.89, electronico),
-					new Producto("Apple iPod", 46.89, electronico),
-					new Producto("Sony Notebook", 846.89, computacion),
-					new Producto("Hewlett Packard Multifuncional", 200.89, computacion),
-					new Producto("Bianchi Bicicleta", 70.89, deporte),
-					new Producto("HP Notebook Omen 17", 2500.89, computacion),
-					new Producto("Mica Cómoda 5 Cajones", 150.89, muebles),
-					new Producto("TV Sony Bravia OLED 4K Ultra HD", 2255.89, electronico)
-					)
-			.flatMap(producto -> {
-				producto.setCreateAt(new Date());
-				return service.save(producto);
-			})
-		).subscribe(this::printProductCreated);
+		Category electronic = new Category("Electrónico");
+		Category sport = new Category("Deporte");
+		Category computing = new Category("Computación");
+		Category furniture = new Category("Muebles");
+
+		Flux.just(electronic, sport, computing, furniture).flatMap(service::saveCategory)
+				.doOnNext(this::printCategoryCreated)
+				.thenMany(Flux
+						.just(new Product("TV Panasonic Pantalla LCD", 456.89, electronic),
+								new Product("Sony Camara HD Digital", 177.89, electronic),
+								new Product("Apple iPod", 46.89, electronic),
+								new Product("Sony Notebook", 846.89, computing),
+								new Product("Hewlett Packard Multifuncional", 200.89, computing),
+								new Product("Bianchi Bicicleta", 70.89, sport),
+								new Product("HP Notebook Omen 17", 2500.89, computing),
+								new Product("Mica Cómoda 5 Cajones", 150.89, furniture),
+								new Product("TV Sony Bravia OLED 4K Ultra HD", 2255.89, electronic))
+						.flatMap(product -> {
+							product.setCreateAt(new Date());
+							return service.save(product);
+						}))
+				.subscribe(this::printProductCreated);
 	}
 
 	protected void restoreDB() {
@@ -66,11 +64,11 @@ public class SpringBootWebfluxApplication implements CommandLineRunner {
 		mongoTemplate.dropCollection("categorias").subscribe();
 	}
 
-	private void printCategoryCreated(Categoria categoria) {
-		logger.info("Categoria creada: " + categoria.getNombre() + ", Id: " + categoria.getId());
+	private void printCategoryCreated(Category category) {
+		logger.info("Categoria creada: " + category.getName() + ", Id: " + category.getId());
 	}
-	
-	private void printProductCreated(Producto producto) {
-		logger.info("Insert: " + producto.getId() + " " + producto.getNombre());
+
+	private void printProductCreated(Product product) {
+		logger.info("Insert: " + product.getId() + " " + product.getName());
 	}
 }

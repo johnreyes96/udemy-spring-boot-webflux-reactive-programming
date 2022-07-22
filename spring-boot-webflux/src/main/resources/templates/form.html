@@ -7,23 +7,23 @@
 <body>
 	<h1 th:text="${titulo}"></h1>
 	<div>
-		<a th:href="@{/listar}">Volver</a>
+		<a th:href="@{/list}">Volver</a>
 		<form th:action="@{/form}" method="post" th:object="${producto}" enctype="multipart/form-data">
 			<input th:if="${producto.id != null}" type="hidden" th:field="*{id}"/>
-			<input th:if="${producto.foto != null}" type="hidden" th:field="*{foto}"/>
+			<input th:if="${producto.photo != null}" type="hidden" th:field="*{photo}"/>
 			<div>
-				<label for="nombre">Nombre</label>
+				<label for="name">Nombre</label>
 				<div>
-					<input type="text" th:field="*{nombre}"/>
+					<input type="text" th:field="*{name}"/>
 				</div>
-				<small th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+				<small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
 			</div>
 			<div>
-				<label for="precio">Precio</label>
+				<label for="price">Precio</label>
 				<div>
-					<input type="number" th:field="*{precio}"/>
+					<input type="number" th:field="*{price}"/>
 				</div>
-				<small th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></small>
+				<small th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
 			</div>
 			<div>
 				<label for="createAt">Fecha</label>
@@ -32,14 +32,14 @@
 				</div>
 			</div>
 			<div>
-				<label for="categoria.id">Categoria</label>
+				<label for="category.id">Categoria</label>
 				<div>
-					<select th:field="*{categoria.id}">
+					<select th:field="*{category.id}">
 						<option value="">-- Seleccionar --</option>
-						<option th:each="categoria: ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}"></option>
+						<option th:each="category: ${categorias}" th:value="${category.id}" th:text="${category.name}"></option>
 					</select>
 				</div>
-				<small th:if="${#fields.hasErrors('categoria.id')}" th:errors="*{categoria.id}"></small>
+				<small th:if="${#fields.hasErrors('category.id')}" th:errors="*{category.id}"></small>
 			</div>
 			<div>
 				<label for="file">Foto</label>
