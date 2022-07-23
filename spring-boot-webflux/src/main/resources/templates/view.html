@@ -2,21 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
-	<title th:text="${titulo}">Ver productos</title>
+	<title th:text="${title}"></title>
 </head>
 <body> 
-	<h1 th:text="${titulo}"></h1>
+	<h1 th:text="${title}"></h1>
 	<a th:href="@{/list}">Volver</a>
 	<div>
 		<div>
-			<img th:if="${producto.photo != null && #strings.length(producto.photo) > 0}"
-				th:src="@{/uploads/img/} + ${producto.photo}" th:alt="${producto.name}" style="max-width: 25%;"/>
+			<img th:if="${product.photo != null && #strings.length(product.photo) > 0}"
+				th:src="@{/uploads/img/} + ${product.photo}" th:alt="${product.name}" style="max-width: 25%;"/>
 		</div>
 		<ul>
-			<li th:text="${producto.name}"></li>
-			<li th:text="'Id: ' + ${producto.id}"></li>
-			<li th:text="'Precio: ' + ${#numbers.formatCurrency(producto.price)}"></li>
-			<li th:text="'Fecha: ' + ${#calendars.format(producto.createAt, 'dd/MM/yyyy')}"></li>
+			<li th:text="${product.name}"></li>
+			<li th:text="'Id: ' + ${product.id}"></li>
+			<li th:text="'Precio: ' + ${#numbers.formatCurrency(product.price)}"></li>
+			<li th:text="'Fecha: ' + ${#calendars.format(product.createAt, 'dd/MM/yyyy')}"></li>
 		</ul>
 	</div>
 </body>

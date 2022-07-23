@@ -35,7 +35,7 @@ import com.bolsadeideas.springboot.webflux.app.models.documents.Category;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
 import com.bolsadeideas.springboot.webflux.app.models.services.IProductService;
 
-@SessionAttributes("producto")
+@SessionAttributes("product")
 @Controller
 public class ProductController {
 
@@ -47,7 +47,7 @@ public class ProductController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
-	@ModelAttribute("categorias")
+	@ModelAttribute("categories")
 	public Flux<Category> categories() {
 		return service.findAllCategories();
 	}
@@ -65,8 +65,8 @@ public class ProductController {
 	public Mono<String> view(Model model, @PathVariable String id) {
 		return service.findById(id)
 				.doOnNext(product -> {
-					model.addAttribute("producto", product);
-					model.addAttribute("titulo", "Detalle Producto");
+					model.addAttribute("product", product);
+					model.addAttribute("title", "Detalle Producto");
 				}).switchIfEmpty(Mono.just(new Product()))
 				.flatMap(product -> {
 					if (product.getId() == null) {
@@ -81,16 +81,16 @@ public class ProductController {
 	public String list(Model model) {
 		Flux<Product> products = service.findAllWithNameUpperCase();
 		products.subscribe(product -> logger.info(product.getName()));
-		model.addAttribute("productos", products);
-		model.addAttribute("titulo", "Listado de productos");
+		model.addAttribute("products", products);
+		model.addAttribute("title", "Listado de productos");
 		return "list";
 	}
 
 	@GetMapping("/form")
 	public Mono<String> create(Model model) {
-		model.addAttribute("producto", new Product());
-		model.addAttribute("titulo", "Formulario de producto");
-		model.addAttribute("boton", "Crear");
+		model.addAttribute("product", new Product());
+		model.addAttribute("title", "Formulario de producto");
+		model.addAttribute("button", "Crear");
 		return Mono.just("form");
 	}
 
@@ -100,9 +100,9 @@ public class ProductController {
 				.doOnNext(product -> {
 					logger.info("Producto: " + product.getName());
 				}).defaultIfEmpty(new Product());
-		model.addAttribute("producto", productMono);
-		model.addAttribute("titulo", "Editar Producto");
-		model.addAttribute("boton", "Editar");
+		model.addAttribute("product", productMono);
+		model.addAttribute("title", "Editar Producto");
+		model.addAttribute("button", "Editar");
 		return Mono.just("form");
 	}
 
@@ -111,9 +111,9 @@ public class ProductController {
 		return service.findById(id)
 				.doOnNext(product -> {
 					logger.info("Producto: " + product.getName());
-					model.addAttribute("producto", product);
-					model.addAttribute("titulo", "Editar Producto");
-					model.addAttribute("boton", "Editar");
+					model.addAttribute("product", product);
+					model.addAttribute("title", "Editar Producto");
+					model.addAttribute("button", "Editar");
 				}).defaultIfEmpty(new Product())
 				.flatMap(product -> {
 					if (product.getId() == null) {
@@ -129,8 +129,8 @@ public class ProductController {
 			SessionStatus status) {
 		// TODO: Don't run the .hasErrors
 		if (result.hasErrors()) {
-			model.addAttribute("titulo", "Errores en formulario producto");
-			model.addAttribute("botton", "Guardar");
+			model.addAttribute("title", "Errores en formulario producto");
+			model.addAttribute("button", "Guardar");
 			return Mono.just("form");
 		} else {
 			status.setComplete();
@@ -179,24 +179,24 @@ public class ProductController {
 		Flux<Product> products = service.findAllWithNameUpperCase()
 				.delayElements(Duration.ofSeconds(1));
 		products.subscribe(product -> logger.info(product.getName()));
-		model.addAttribute("productos", new ReactiveDataDriverContextVariable(products, 1));
-		model.addAttribute("titulo", "Listado de productos");
+		model.addAttribute("products", new ReactiveDataDriverContextVariable(products, 1));
+		model.addAttribute("title", "Listado de productos");
 		return "list";
 	}
 
 	@GetMapping("/list-full")
 	public String listFull(Model model) {
 		Flux<Product> products = service.findAllWithNameUpperCaseRepeat();
-		model.addAttribute("productos", products);
-		model.addAttribute("titulo", "Listado de productos");
+		model.addAttribute("products", products);
+		model.addAttribute("title", "Listado de productos");
 		return "list";
 	}
 
 	@GetMapping("/list-chunked")
 	public String listChunked(Model model) {
 		Flux<Product> products = service.findAllWithNameUpperCaseRepeat();
-		model.addAttribute("productos", products);
-		model.addAttribute("titulo", "Listado de productos");
+		model.addAttribute("products", products);
+		model.addAttribute("title", "Listado de productos");
 		return "list-chunked";
 	}
 

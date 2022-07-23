@@ -145,8 +145,8 @@ public class ProductControllerTest {
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.just(product)).when(service).findById(id);
-		doReturn(model).when(model).addAttribute("producto", product);
-		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
+		doReturn(model).when(model).addAttribute("product", product);
+		doReturn(model).when(model).addAttribute("title", "Detalle Producto");
 
 		StepVerifier.create(productController.view(model, id))
 		.expectNextMatches(expected -> "view".equals(expected))
@@ -154,8 +154,8 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
-		verify(model).addAttribute("producto", product);
-		verify(model).addAttribute("titulo", "Detalle Producto");
+		verify(model).addAttribute("product", product);
+		verify(model).addAttribute("title", "Detalle Producto");
 	}
 
 	@Test
@@ -178,15 +178,15 @@ public class ProductControllerTest {
 		Flux<Product> products = Flux.empty();
 		Model model = Mockito.mock(Model.class);
 		doReturn(products).when(service).findAllWithNameUpperCase();
-		doReturn(model).when(model).addAttribute("productos", products);
-		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
+		doReturn(model).when(model).addAttribute("products", products);
+		doReturn(model).when(model).addAttribute("title", "Detalle Producto");
 
 		String response = productController.list(model);
 
 		Assert.assertEquals("list", response);
 		verify(service).findAllWithNameUpperCase();
-		verify(model).addAttribute("productos", products);
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute("products", products);
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
@@ -198,32 +198,32 @@ public class ProductControllerTest {
 		Flux<Product> products = Flux.just(laptop, smartphone);
 		Model model = Mockito.mock(Model.class);
 		doReturn(products).when(service).findAllWithNameUpperCase();
-		doReturn(model).when(model).addAttribute("productos", products);
-		doReturn(model).when(model).addAttribute("titulo", "Detalle Producto");
+		doReturn(model).when(model).addAttribute("products", products);
+		doReturn(model).when(model).addAttribute("title", "Detalle Producto");
 
 		String response = productController.list(model);
 
 		Assert.assertEquals("list", response);
 		verify(service).findAllWithNameUpperCase();
-		verify(model).addAttribute("productos", products);
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute("products", products);
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
 	public void createMustSetNewProductAndTitleAndNameButtonAndReturnStringTest() {
 		Model model = Mockito.mock(Model.class);
-		doReturn(model).when(model).addAttribute(Mockito.eq("producto"), Mockito.any(Product.class));
-		doReturn(model).when(model).addAttribute("titulo", "Formulario de producto");
-		doReturn(model).when(model).addAttribute("boton", "Crear");
+		doReturn(model).when(model).addAttribute(Mockito.eq("product"), Mockito.any(Product.class));
+		doReturn(model).when(model).addAttribute("title", "Formulario de producto");
+		doReturn(model).when(model).addAttribute("button", "Crear");
 
 		StepVerifier.create(productController.create(model))
 		.expectNextMatches(expected -> "form".equals(expected))
 		.expectComplete()
 		.verify();
 
-		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any(Product.class));
-		verify(model).addAttribute("titulo", "Formulario de producto");
-		verify(model).addAttribute("boton", "Crear");
+		verify(model).addAttribute(Mockito.eq("product"), Mockito.any(Product.class));
+		verify(model).addAttribute("title", "Formulario de producto");
+		verify(model).addAttribute("button", "Crear");
 	}
 
 	@Test
@@ -233,9 +233,9 @@ public class ProductControllerTest {
 		Product product = new Product();
 		Mono<Product> productMono = Mono.just(product);
 		doReturn(productMono).when(service).findById(id);
-		doReturn(model).when(model).addAttribute("producto", productMono);
-		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
-		doReturn(model).when(model).addAttribute("boton", "Editar");
+		doReturn(model).when(model).addAttribute("product", productMono);
+		doReturn(model).when(model).addAttribute("title", "Editar Producto");
+		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.edit(id, model))
 		.expectNextMatches(expected -> "form".equals(expected))
@@ -243,9 +243,9 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
-		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any()); // Return MonoDefaultIfEmpty
-		verify(model).addAttribute("titulo", "Editar Producto");
-		verify(model).addAttribute("boton", "Editar");
+		verify(model).addAttribute(Mockito.eq("product"), Mockito.any()); // Return MonoDefaultIfEmpty
+		verify(model).addAttribute("title", "Editar Producto");
+		verify(model).addAttribute("button", "Editar");
 	}
 
 	@Test
@@ -254,9 +254,9 @@ public class ProductControllerTest {
 		Model model = Mockito.mock(Model.class);
 		Mono<Product> product = Mono.empty();
 		doReturn(product).when(service).findById(id);
-		doReturn(model).when(model).addAttribute("producto", product);
-		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
-		doReturn(model).when(model).addAttribute("boton", "Editar");
+		doReturn(model).when(model).addAttribute("product", product);
+		doReturn(model).when(model).addAttribute("title", "Editar Producto");
+		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.edit(id, model))
 		.expectNextMatches(expected -> "form".equals(expected))
@@ -264,9 +264,9 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
-		verify(model).addAttribute(Mockito.eq("producto"), Mockito.any()); // Return MonoDefaultIfEmpty
-		verify(model).addAttribute("titulo", "Editar Producto");
-		verify(model).addAttribute("boton", "Editar");
+		verify(model).addAttribute(Mockito.eq("product"), Mockito.any()); // Return MonoDefaultIfEmpty
+		verify(model).addAttribute("title", "Editar Producto");
+		verify(model).addAttribute("button", "Editar");
 	}
 
 	@Test
@@ -277,9 +277,9 @@ public class ProductControllerTest {
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.just(product)).when(service).findById(id);
-		doReturn(model).when(model).addAttribute("producto", product);
-		doReturn(model).when(model).addAttribute("titulo", "Editar Producto");
-		doReturn(model).when(model).addAttribute("boton", "Editar");
+		doReturn(model).when(model).addAttribute("product", product);
+		doReturn(model).when(model).addAttribute("title", "Editar Producto");
+		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.editV2(id, model))
 		.expectNextMatches(expected -> "form".equals(expected))
@@ -287,9 +287,9 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
-		verify(model).addAttribute("producto", product);
-		verify(model).addAttribute("titulo", "Editar Producto");
-		verify(model).addAttribute("boton", "Editar");
+		verify(model).addAttribute("product", product);
+		verify(model).addAttribute("title", "Editar Producto");
+		verify(model).addAttribute("button", "Editar");
 	}
 
 	@Test
@@ -314,8 +314,8 @@ public class ProductControllerTest {
 		Model model = Mockito.mock(Model.class);
 		FilePart file = Mockito.mock(FilePart.class);
 		doReturn(true).when(result).hasErrors();
-		doReturn(model).when(model).addAttribute("titulo", "Errores en formulario producto");
-		doReturn(model).when(model).addAttribute("botton", "Guardar");
+		doReturn(model).when(model).addAttribute("title", "Errores en formulario producto");
+		doReturn(model).when(model).addAttribute("button", "Guardar");
 		
 		StepVerifier.create(productController.save(null, result, model, null, null))
 		.expectNextMatches(expected -> "form".equals(expected))
@@ -323,8 +323,8 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(result).hasErrors();
-		verify(model).addAttribute("titulo", "Errores en formulario producto");
-		verify(model).addAttribute("botton", "Guardar");	
+		verify(model).addAttribute("title", "Errores en formulario producto");
+		verify(model).addAttribute("button", "Guardar");	
 		verify(result).hasErrors();
 		verify(status, Mockito.never()).setComplete();
 		verify(service, Mockito.never()).findCategoryById(Mockito.anyString());
@@ -475,15 +475,15 @@ public class ProductControllerTest {
 	public void listDataDriverWhenFindAllWithNameUpperCaseHasNotElementsThenMustSetProductsAndTitleAndReturnMonoStringTest() {
 		Model model = Mockito.mock(Model.class);
 		doReturn(Flux.empty()).when(service).findAllWithNameUpperCase();
-		doReturn(model).when(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
-		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
+		doReturn(model).when(model).addAttribute(Mockito.eq("products"), Mockito.any(ReactiveDataDriverContextVariable.class));
+		doReturn(model).when(model).addAttribute("title", "Listado de productos");
 		
 		String result = productController.listDataDriver(model);
 
 		Assertions.assertEquals("list", result);
 		verify(service).findAllWithNameUpperCase();
-		verify(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute(Mockito.eq("products"), Mockito.any(ReactiveDataDriverContextVariable.class));
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
@@ -491,15 +491,15 @@ public class ProductControllerTest {
 		Product product = new Product();
 		Model model = Mockito.mock(Model.class);
 		doReturn(Flux.just(product)).when(service).findAllWithNameUpperCase();
-		doReturn(model).when(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
-		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
+		doReturn(model).when(model).addAttribute(Mockito.eq("products"), Mockito.any(ReactiveDataDriverContextVariable.class));
+		doReturn(model).when(model).addAttribute("title", "Listado de productos");
 		
 		String result = productController.listDataDriver(model);
 
 		Assertions.assertEquals("list", result);
 		verify(service).findAllWithNameUpperCase();
-		verify(model).addAttribute(Mockito.eq("productos"), Mockito.any(ReactiveDataDriverContextVariable.class));
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute(Mockito.eq("products"), Mockito.any(ReactiveDataDriverContextVariable.class));
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
@@ -507,15 +507,15 @@ public class ProductControllerTest {
 		Flux<Product> products = Flux.empty();
 		Model model = Mockito.mock(Model.class);
 		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
-		doReturn(model).when(model).addAttribute("productos", products);
-		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
+		doReturn(model).when(model).addAttribute("products", products);
+		doReturn(model).when(model).addAttribute("title", "Listado de productos");
 		
 		String result = productController.listFull(model);
 
 		Assertions.assertEquals("list", result);
 		verify(service).findAllWithNameUpperCaseRepeat();
-		verify(model).addAttribute("productos", products);
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute("products", products);
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
@@ -524,15 +524,15 @@ public class ProductControllerTest {
 		Flux<Product> products = Flux.just(product);
 		Model model = Mockito.mock(Model.class);
 		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
-		doReturn(model).when(model).addAttribute("productos", products);
-		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
+		doReturn(model).when(model).addAttribute("products", products);
+		doReturn(model).when(model).addAttribute("title", "Listado de productos");
 		
 		String result = productController.listFull(model);
 
 		Assertions.assertEquals("list", result);
 		verify(service).findAllWithNameUpperCaseRepeat();
-		verify(model).addAttribute("productos", products);
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute("products", products);
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
@@ -540,15 +540,15 @@ public class ProductControllerTest {
 		Flux<Product> products = Flux.empty();
 		Model model = Mockito.mock(Model.class);
 		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
-		doReturn(model).when(model).addAttribute("productos", products);
-		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
+		doReturn(model).when(model).addAttribute("products", products);
+		doReturn(model).when(model).addAttribute("title", "Listado de productos");
 		
 		String result = productController.listChunked(model);
 
 		Assertions.assertEquals("list-chunked", result);
 		verify(service).findAllWithNameUpperCaseRepeat();
-		verify(model).addAttribute("productos", products);
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute("products", products);
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
@@ -557,15 +557,15 @@ public class ProductControllerTest {
 		Flux<Product> products = Flux.just(product);
 		Model model = Mockito.mock(Model.class);
 		doReturn(products).when(service).findAllWithNameUpperCaseRepeat();
-		doReturn(model).when(model).addAttribute("productos", products);
-		doReturn(model).when(model).addAttribute("titulo", "Listado de productos");
+		doReturn(model).when(model).addAttribute("products", products);
+		doReturn(model).when(model).addAttribute("title", "Listado de productos");
 		
 		String result = productController.listChunked(model);
 
 		Assertions.assertEquals("list-chunked", result);
 		verify(service).findAllWithNameUpperCaseRepeat();
-		verify(model).addAttribute("productos", products);
-		verify(model).addAttribute("titulo", "Listado de productos");
+		verify(model).addAttribute("products", products);
+		verify(model).addAttribute("title", "Listado de productos");
 	}
 
 	@Test
