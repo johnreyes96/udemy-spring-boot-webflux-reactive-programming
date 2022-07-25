@@ -143,6 +143,7 @@ public class ProductController {
 							product.setPhoto(UUID.randomUUID().toString() + "-"
 									+ file.filename().replace(" ", "").replace(":", "").replace("\\", ""));
 						}
+						product.setCategory(category);
 						return service.save(product);
 					}).doOnNext(productSaved -> {
 						logger.info("Categoria asignada: " + productSaved.getCategory().getName() + " Id Cat: "
