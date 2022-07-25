@@ -8,51 +8,70 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
 </head>
 <body>
-	<h1 th:text="${title}"></h1>
-	<div>
-		<a th:href="@{/list}">Volver</a>
+	<div class="container">
+		<br>
+		<div class="row text-center">
+			<div class="col">
+				<h1 th:text="${title}"></h1>
+		    </div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col">
+				<a th:href="@{/list}" class="btn btn-link" role="button">Volver</a>
+		    </div>
+		</div>
 		<form th:action="@{/form}" method="post" th:object="${product}" enctype="multipart/form-data">
 			<input th:if="${product.id != null}" type="hidden" th:field="*{id}"/>
 			<input th:if="${product.photo != null}" type="hidden" th:field="*{photo}"/>
-			<div>
-				<label for="name">Nombre</label>
-				<div>
-					<input type="text" th:field="*{name}"/>
-				</div>
-				<small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+			<div class="row">
+				<div class="col">
+					<div class="form-floating mb-3">
+						<input th:field="*{name}" type="text" class="form-control" id="name" placeholder="Nombre">
+						<label for="name">Nombre</label>
+					</div>
+					<small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+			    </div>
+				<div class="col">
+					<div class="input-group mb-3">
+						<span class="input-group-text">€</span>
+						<div class="form-floating">
+						    <input th:field="*{price}" type="text" class="form-control" id="price" placeholder="Precio">
+						    <label for="price">Precio</label>
+						</div>
+						<small th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
+					</div>
+			    </div>
 			</div>
-			<div>
-				<label for="price">Precio</label>
-				<div>
-					<input type="number" th:field="*{price}"/>
+			<div class="row">
+				<div class="col">
+					<div class="form-floating mb-3">
+						<input th:field="*{createAt}" type="date" class="form-control" id="createAt" placeholder="Fecha">
+					 	<label for="createAt">Fecha</label>
+					</div>
 				</div>
-				<small th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
-			</div>
-			<div>
-				<label for="createAt">Fecha</label>
-				<div>
-					<input type="date" th:field="*{createAt}"/>
-				</div>
-			</div>
-			<div>
-				<label for="category.id">Categoria</label>
-				<div>
-					<select th:field="*{category.id}">
-						<option value="">-- Seleccionar --</option>
-						<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-					</select>
-				</div>
-				<small th:if="${#fields.hasErrors('category.id')}" th:errors="*{category.id}"></small>
-			</div>
-			<div>
-				<label for="file">Foto</label>
-				<div>
-					<input type="file" name="file"/>
+				<div class="col">
+					<div class="form-floating">
+					 	<select th:field="*{category.id}" class="form-select" id="category.id" aria-label="Categoria">
+						    <option value="" selected>-- Seleccionar --</option>
+							<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+					  	</select>
+					 	<label for="category.id">Categoria</label>
+						<small th:if="${#fields.hasErrors('category.id')}" th:errors="*{category.id}"></small>
+					</div>
 				</div>
 			</div>
-			<div>
-				<div>
-					<input type="submit" th:value="${button}"/>
+			<div class="row">
+				<div class="col">
+					<div class="mb-3">
+						<label for="file" class="form-label">Foto</label>
+					  	<input class="form-control" type="file" id="file">
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<input th:value="${button}" type="submit" class="btn btn-primary">
 				</div>
 			</div>
 		</form>
