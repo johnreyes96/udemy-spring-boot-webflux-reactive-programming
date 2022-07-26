@@ -21,6 +21,7 @@
 				<a th:href="@{/list}" class="btn btn-link" role="button">Volver</a>
 		    </div>
 		</div>
+		<br>
 		<form th:action="@{/form}" method="post" th:object="${product}" enctype="multipart/form-data">
 			<input th:if="${product.id != null}" type="hidden" th:field="*{id}"/>
 			<input th:if="${product.photo != null}" type="hidden" th:field="*{photo}"/>
@@ -65,7 +66,7 @@
 				<div class="col">
 					<div class="mb-3">
 						<label for="file" class="form-label">Foto</label>
-					  	<input class="form-control" type="file" id="file">
+						<input type="file" id="file" name="file" class="form-control">
 					</div>
 				</div>
 			</div>
