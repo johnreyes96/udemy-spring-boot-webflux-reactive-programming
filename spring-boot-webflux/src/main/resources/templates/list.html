@@ -71,9 +71,27 @@
 								</a>
 							</td>
 							<td>
-								<a th:href="@{/delete/} + ${product.id}" onclick="return confirm('¿Estás seguro que desea eliminar?');" class="btn btn-danger" role="button">
+								<a th:href="@{/delete/} + ${product.id}" data-bs-toggle="modal" th:data-bs-target="@{#modal} + ${product.id}" class="btn btn-danger" role="button">
 									<i class="bi bi-trash"></i>
 								</a>
+
+								<!-- Modal eliminar producto -->
+								<div class="modal fade" th:id="@{modal} + ${product.id}" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="modalLabel">Eliminar producto</h5>
+												<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+											</div>
+											<div class="modal-body" th:text="'¿Estás seguro que desea eliminar el producto ' + ${product.name} + @{?}"></div>
+											<div class="modal-footer">
+												<a th:href="@{/delete/} + ${product.id}" class="btn btn-primary" role="button">Aceptar</a>
+												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+											</div>
+										</div>
+									</div>
+								</div>
+
 							</td>
 						</tr>
 					</tbody>
