@@ -89,7 +89,7 @@ public class ProductController {
 	@GetMapping("/form")
 	public Mono<String> create(Model model) {
 		model.addAttribute("product", new Product());
-		model.addAttribute("title", "Formulario de producto");
+		model.addAttribute("title", "Crear producto");
 		model.addAttribute("button", "Crear");
 		return Mono.just("form");
 	}
@@ -101,7 +101,7 @@ public class ProductController {
 					logger.info("Producto: " + product.getName());
 				}).defaultIfEmpty(new Product());
 		model.addAttribute("product", productMono);
-		model.addAttribute("title", "Editar Producto");
+		model.addAttribute("title", "Editar producto");
 		model.addAttribute("button", "Editar");
 		return Mono.just("form");
 	}
@@ -112,7 +112,7 @@ public class ProductController {
 				.doOnNext(product -> {
 					logger.info("Producto: " + product.getName());
 					model.addAttribute("product", product);
-					model.addAttribute("title", "Editar Producto");
+					model.addAttribute("title", "Editar producto");
 					model.addAttribute("button", "Editar");
 				}).defaultIfEmpty(new Product())
 				.flatMap(product -> {

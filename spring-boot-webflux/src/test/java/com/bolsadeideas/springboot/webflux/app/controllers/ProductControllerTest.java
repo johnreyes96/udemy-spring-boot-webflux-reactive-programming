@@ -213,7 +213,7 @@ public class ProductControllerTest {
 	public void createMustSetNewProductAndTitleAndNameButtonAndReturnStringTest() {
 		Model model = Mockito.mock(Model.class);
 		doReturn(model).when(model).addAttribute(Mockito.eq("product"), Mockito.any(Product.class));
-		doReturn(model).when(model).addAttribute("title", "Formulario de producto");
+		doReturn(model).when(model).addAttribute("title", "Crear producto");
 		doReturn(model).when(model).addAttribute("button", "Crear");
 
 		StepVerifier.create(productController.create(model))
@@ -222,7 +222,7 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(model).addAttribute(Mockito.eq("product"), Mockito.any(Product.class));
-		verify(model).addAttribute("title", "Formulario de producto");
+		verify(model).addAttribute("title", "Crear producto");
 		verify(model).addAttribute("button", "Crear");
 	}
 
@@ -234,7 +234,7 @@ public class ProductControllerTest {
 		Mono<Product> productMono = Mono.just(product);
 		doReturn(productMono).when(service).findById(id);
 		doReturn(model).when(model).addAttribute("product", productMono);
-		doReturn(model).when(model).addAttribute("title", "Editar Producto");
+		doReturn(model).when(model).addAttribute("title", "Editar producto");
 		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.edit(id, model))
@@ -244,7 +244,7 @@ public class ProductControllerTest {
 
 		verify(service).findById(id);
 		verify(model).addAttribute(Mockito.eq("product"), Mockito.any()); // Return MonoDefaultIfEmpty
-		verify(model).addAttribute("title", "Editar Producto");
+		verify(model).addAttribute("title", "Editar producto");
 		verify(model).addAttribute("button", "Editar");
 	}
 
@@ -255,7 +255,7 @@ public class ProductControllerTest {
 		Mono<Product> product = Mono.empty();
 		doReturn(product).when(service).findById(id);
 		doReturn(model).when(model).addAttribute("product", product);
-		doReturn(model).when(model).addAttribute("title", "Editar Producto");
+		doReturn(model).when(model).addAttribute("title", "Editar producto");
 		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.edit(id, model))
@@ -265,7 +265,7 @@ public class ProductControllerTest {
 
 		verify(service).findById(id);
 		verify(model).addAttribute(Mockito.eq("product"), Mockito.any()); // Return MonoDefaultIfEmpty
-		verify(model).addAttribute("title", "Editar Producto");
+		verify(model).addAttribute("title", "Editar producto");
 		verify(model).addAttribute("button", "Editar");
 	}
 
@@ -278,7 +278,7 @@ public class ProductControllerTest {
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.just(product)).when(service).findById(id);
 		doReturn(model).when(model).addAttribute("product", product);
-		doReturn(model).when(model).addAttribute("title", "Editar Producto");
+		doReturn(model).when(model).addAttribute("title", "Editar producto");
 		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.editV2(id, model))
@@ -288,7 +288,7 @@ public class ProductControllerTest {
 
 		verify(service).findById(id);
 		verify(model).addAttribute("product", product);
-		verify(model).addAttribute("title", "Editar Producto");
+		verify(model).addAttribute("title", "Editar producto");
 		verify(model).addAttribute("button", "Editar");
 	}
 

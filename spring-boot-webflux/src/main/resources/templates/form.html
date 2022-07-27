@@ -27,20 +27,20 @@
 			<input th:if="${product.photo != null}" type="hidden" th:field="*{photo}"/>
 			<div class="row">
 				<div class="col">
+					<small style="color: red;" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
 					<div class="form-floating mb-3">
 						<input th:field="*{name}" type="text" class="form-control" id="name" placeholder="Nombre">
 						<label for="name">Nombre</label>
 					</div>
-					<small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
 			    </div>
 				<div class="col">
+					<small style="color: red;" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
 					<div class="input-group mb-3">
 						<span class="input-group-text">€</span>
 						<div class="form-floating">
 						    <input th:field="*{price}" type="text" class="form-control" id="price" placeholder="Precio">
 						    <label for="price">Precio</label>
 						</div>
-						<small th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
 					</div>
 			    </div>
 			</div>
@@ -58,7 +58,7 @@
 							<option th:each="category: ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
 					  	</select>
 					 	<label for="category.id">Categoria</label>
-						<small th:if="${#fields.hasErrors('category.id')}" th:errors="*{category.id}"></small>
+						<small style="color: red;" th:if="${#fields.hasErrors('category.id')}" th:errors="*{category.id}"></small>
 					</div>
 				</div>
 			</div>
