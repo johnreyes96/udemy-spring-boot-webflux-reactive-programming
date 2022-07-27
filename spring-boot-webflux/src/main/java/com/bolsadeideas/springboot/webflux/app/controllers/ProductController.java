@@ -66,7 +66,7 @@ public class ProductController {
 		return service.findById(id)
 				.doOnNext(product -> {
 					model.addAttribute("product", product);
-					model.addAttribute("title", "Detalle Producto");
+					model.addAttribute("title", "Detalle del producto");
 				}).switchIfEmpty(Mono.just(new Product()))
 				.flatMap(product -> {
 					if (product.getId() == null) {

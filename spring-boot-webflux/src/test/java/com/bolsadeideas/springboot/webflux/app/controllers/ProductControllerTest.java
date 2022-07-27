@@ -146,7 +146,7 @@ public class ProductControllerTest {
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.just(product)).when(service).findById(id);
 		doReturn(model).when(model).addAttribute("product", product);
-		doReturn(model).when(model).addAttribute("title", "Detalle Producto");
+		doReturn(model).when(model).addAttribute("title", "Detalle del producto");
 
 		StepVerifier.create(productController.view(model, id))
 		.expectNextMatches(expected -> "view".equals(expected))
@@ -155,7 +155,7 @@ public class ProductControllerTest {
 
 		verify(service).findById(id);
 		verify(model).addAttribute("product", product);
-		verify(model).addAttribute("title", "Detalle Producto");
+		verify(model).addAttribute("title", "Detalle del producto");
 	}
 
 	@Test
