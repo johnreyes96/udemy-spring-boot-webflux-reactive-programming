@@ -25,10 +25,8 @@ public class ProductRestController {
 	@GetMapping
 	public Flux<Product> index() {
 		Flux<Product> products = productoDao.findAll()
-				.map(product -> {
-					product.setName(product.getName().toUpperCase());
-					return product;
-				}).doOnNext(product -> logger.info(product.getName()));
+				.map(Product::setNameToUpperCase)
+				.doOnNext(product -> logger.info(product.getName()));
 		return products;
 	}
 

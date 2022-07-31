@@ -4,7 +4,6 @@ import java.util.Date;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -40,6 +39,11 @@ public class Product {
 	public Product(String name, Double price, Category category) {
 		this(name, price);
 		this.category = category;
+	}
+	
+	public Product setNameToUpperCase() {
+		this.setName(this.getName().toUpperCase());
+		return this;
 	}
 
 	public String getId() {

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,9 +47,11 @@ public class ProductRestControllerTest {
 
 	@Test
 	public void indexWhenFindAllReturnOneElementThenMustReturnFluxWithOneProductWithNameUpperCaseTest() {
+		Product productMock = Mockito.mock(Product.class);
 		Product product = new Product();
-		product.setName("Sony Notebook");
-		doReturn(Flux.just(product)).when(productDao).findAll();
+		product.setName("SONY NOTEBOOK");
+		doReturn(Flux.just(productMock)).when(productDao).findAll();
+		doReturn(product).when(productMock).setNameToUpperCase();
 
 		StepVerifier.create(productRestController.index())
 		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
@@ -56,15 +59,20 @@ public class ProductRestControllerTest {
 		.verify();
 
 		verify(productDao).findAll();
+		verify(productMock).setNameToUpperCase();
 	}
 
 	@Test
 	public void indexWhenFindAllReturnElementsThenMustReturnFluxWithProductsWithNameUpperCaseTest() {
+		Product laptopMock = Mockito.mock(Product.class);
+		Product smartphoneMock = Mockito.mock(Product.class);
 		Product laptop = new Product();
-		laptop.setName("Sony Notebook");
+		laptop.setName("SONY NOTEBOOK");
 		Product smartphone = new Product();
-		smartphone.setName("Apple iPod");
-		doReturn(Flux.just(laptop, smartphone)).when(productDao).findAll();
+		smartphone.setName("APPLE IPOD");
+		doReturn(Flux.just(laptopMock, smartphoneMock)).when(productDao).findAll();
+		doReturn(laptop).when(laptopMock).setNameToUpperCase();
+		doReturn(smartphone).when(smartphoneMock).setNameToUpperCase();
 
 		StepVerifier.create(productRestController.index())
 		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
@@ -73,6 +81,8 @@ public class ProductRestControllerTest {
 		.verify();
 
 		verify(productDao).findAll();
+		verify(laptopMock).setNameToUpperCase();
+		verify(smartphoneMock).setNameToUpperCase();
 	}
 
 	@Test
