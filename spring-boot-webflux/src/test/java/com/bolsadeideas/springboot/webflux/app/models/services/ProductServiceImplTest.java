@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.context.annotation.ComponentScan;
@@ -77,15 +78,18 @@ public class ProductServiceImplTest {
 
 	@Test
 	public void findAllWithNameUpperCaseWhenIsInvokedThenMustUpperCaseToProductsNameTest() {
+		Product productMock = Mockito.mock(Product.class);
 		Product product = new Product();
-		product.setName("Sony Notebook");
-		doReturn(Flux.just(product)).when(productDao).findAll();
+		product.setName("SONY NOTEBOOK");
+		doReturn(Flux.just(productMock)).when(productDao).findAll();
+		doReturn(product).when(productMock).setNameToUpperCase();
 
 		StepVerifier.create(productService.findAllWithNameUpperCase())
 				.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
 				.expectComplete().verify();
 
 		verify(productDao).findAll();
+		verify(productMock).setNameToUpperCase();
 	}
 
 	@Test

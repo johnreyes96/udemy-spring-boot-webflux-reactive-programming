@@ -41,10 +41,7 @@ public class ProductServiceImpl implements IProductService {
 
 	@Override
 	public Flux<Product> findAllWithNameUpperCase() {
-		return productDao.findAll().map(product -> {
-			product.setName(product.getName().toUpperCase());
-			return product;
-		});
+		return productDao.findAll().map(Product::setNameToUpperCase);
 	}
 
 	@Override
