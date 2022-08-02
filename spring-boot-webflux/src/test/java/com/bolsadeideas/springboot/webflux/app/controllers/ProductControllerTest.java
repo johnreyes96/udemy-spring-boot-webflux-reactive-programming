@@ -141,12 +141,12 @@ public class ProductControllerTest {
 	@Test
 	public void viewWhenFindProductByIdThenMustSetProductAndTitleAndReturnMonoStringTest() {
 		Product product = new Product();
-		product.setId("id");
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.just(product)).when(service).findById(id);
 		doReturn(model).when(model).addAttribute("product", product);
 		doReturn(model).when(model).addAttribute("title", "Detalle del producto");
+		doReturn(Mono.just(product)).when(productController).isProductIdNull(product, "No existe el producto");
 
 		StepVerifier.create(productController.view(model, id))
 		.expectNextMatches(expected -> "view".equals(expected))
@@ -156,13 +156,17 @@ public class ProductControllerTest {
 		verify(service).findById(id);
 		verify(model).addAttribute("product", product);
 		verify(model).addAttribute("title", "Detalle del producto");
+		verify(productController).isProductIdNull(product, "No existe el producto");
 	}
 
 	@Test
 	public void viewWhenFindProductByIdDoesNotExistsThenMustCreateNewProductAndThrowExceptionAndReturnMonoWithARedirectTest() {
+		String message = "No existe el producto";
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.empty()).when(service).findById(id);
+		doReturn(Mono.error(new InterruptedException(message))).when(productController)
+			.isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 
 		StepVerifier.create(productController.view(model, id))
 		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto".equals(redirectExpected))
@@ -170,6 +174,7 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
+		verify(productController).isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 		verify(model, Mockito.never()).addAttribute(Mockito.anyString(), Mockito.any());
 	}
 
@@ -272,7 +277,6 @@ public class ProductControllerTest {
 	@Test
 	public void editV2WhenFindProductByIdThenMustSetProductAndTitleAndButtonAndReturnMonoStringTest() {
 		Product product = new Product();
-		product.setId("id");
 		product.setName("TV Panasonic Pantalla LCD");
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
@@ -280,6 +284,7 @@ public class ProductControllerTest {
 		doReturn(model).when(model).addAttribute("product", product);
 		doReturn(model).when(model).addAttribute("title", "Editar producto");
 		doReturn(model).when(model).addAttribute("button", "Editar");
+		doReturn(Mono.just(product)).when(productController).isProductIdNull(product, "No existe el producto");
 
 		StepVerifier.create(productController.editV2(id, model))
 		.expectNextMatches(expected -> "form".equals(expected))
@@ -290,13 +295,17 @@ public class ProductControllerTest {
 		verify(model).addAttribute("product", product);
 		verify(model).addAttribute("title", "Editar producto");
 		verify(model).addAttribute("button", "Editar");
+		verify(productController).isProductIdNull(product, "No existe el producto");
 	}
 
 	@Test
 	public void editV2WhenFindProductByIdDoesNotExistsThenMustSetNewProductAndTitleAndButtonAndReturnMonoStringTest() {
+		String message = "No existe el producto";
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		Model model = Mockito.mock(Model.class);
 		doReturn(Mono.empty()).when(service).findById(id);
+		doReturn(Mono.error(new InterruptedException(message))).when(productController)
+			.isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 
 		StepVerifier.create(productController.editV2(id, model))
 		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto".equals(redirectExpected))
@@ -304,6 +313,7 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
+		verify(productController).isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 		verify(model, Mockito.never()).addAttribute(Mockito.anyString(), Mockito.any());
 	}
 
@@ -441,8 +451,11 @@ public class ProductControllerTest {
 
 	@Test
 	public void deleteWhenFindByIdHasNotElementThenMustNotDeleteProductAndReturnRedirectTest() {
+		String message = "No existe el producto a eliminar";
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
 		doReturn(Mono.empty()).when(service).findById(id);
+		doReturn(Mono.error(new InterruptedException(message))).when(productController)
+			.isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 		
 		StepVerifier.create(productController.delete(id))
 		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto+a+eliminar".equals(redirectExpected))
@@ -450,6 +463,7 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
+		verify(productController).isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 		verify(service, Mockito.never()).delete(Mockito.any(Product.class));
 	}
 
@@ -457,9 +471,10 @@ public class ProductControllerTest {
 	public void deleteWhenFindByIdHasElementThenMustDeleteProductAndReturnRedirectTest() {
 		Product product = new Product();
 		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
-		product.setId(id);
 		product.setName("Hewlett Packard Multifuncional");
 		doReturn(Mono.just(product)).when(service).findById(id);
+		doReturn(Mono.just(product)).when(productController).isProductIdNull(product,
+				"No existe el producto a eliminar");
 		doReturn(Mono.empty()).when(service).delete(product);
 		
 		StepVerifier.create(productController.delete(id))
@@ -468,6 +483,7 @@ public class ProductControllerTest {
 		.verify();
 
 		verify(service).findById(id);
+		verify(productController).isProductIdNull(product, "No existe el producto a eliminar");
 		verify(service).delete(product);
 	}
 
@@ -566,6 +582,30 @@ public class ProductControllerTest {
 		verify(service).findAllWithNameUpperCaseRepeat();
 		verify(model).addAttribute("products", products);
 		verify(model).addAttribute("title", "Listado de productos");
+	}
+
+	@Test
+	public void isProductIdNullWhenProductIdIsNotNullThenMustReturnMonoProductTest() {
+		Product product = new Product();
+		String id = "bce26c12-553e-4b20-a593-6dbc9d8dfdd2";
+		product.setId(id);
+		
+		StepVerifier.create(productController.isProductIdNull(product, ""))
+		.expectNextMatches(productExpected -> product.equals(productExpected))
+		.expectComplete()
+		.verify();
+		
+	}
+
+	@Test
+	public void isProductIdNullWhenProductIdIsNullThenMustReturnMonoErrorTest() {
+		Product product = new Product();
+		
+		StepVerifier.create(productController.isProductIdNull(product, "error"))
+		.expectErrorMatches(exception -> exception instanceof InterruptedException
+				&& "error".equals(exception.getMessage()))
+		.verify();
+		
 	}
 
 	@Test

@@ -68,12 +68,8 @@ public class ProductController {
 					model.addAttribute("product", product);
 					model.addAttribute("title", "Detalle del producto");
 				}).switchIfEmpty(Mono.just(new Product()))
-				.flatMap(product -> {
-					if (product.getId() == null) {
-						return Mono.error(new InterruptedException("No existe el producto"));
-					}
-					return Mono.just(product);
-				}).then(Mono.just("view"))
+				.flatMap(product -> isProductIdNull(product, "No existe el producto"))
+				.then(Mono.just("view"))
 				.onErrorResume(exception -> Mono.just("redirect:/list?error=no+existe+el+producto"));
 	}
 
@@ -115,12 +111,8 @@ public class ProductController {
 					model.addAttribute("title", "Editar producto");
 					model.addAttribute("button", "Editar");
 				}).defaultIfEmpty(new Product())
-				.flatMap(product -> {
-					if (product.getId() == null) {
-						return Mono.error(new InterruptedException("No existe el producto"));
-					}
-					return Mono.just(product);
-				}).then(Mono.just("form"))
+				.flatMap(product -> isProductIdNull(product, "No existe el producto"))
+				.then(Mono.just("form"))
 				.onErrorResume(exception -> Mono.just("redirect:/list?error=no+existe+el+producto"));
 	}
 
@@ -140,8 +132,10 @@ public class ProductController {
 							product.setCreateAt(new Date());
 		
 						if (!file.filename().isEmpty()) {
-							product.setPhoto(UUID.randomUUID().toString() + "-"
-									+ file.filename().replace(" ", "").replace(":", "").replace("\\", ""));
+							product.setPhoto(UUID.randomUUID().toString() + "-" + file.filename()
+									.replace(" ", "")
+									.replace(":", "")
+									.replace("\\", ""));
 						}
 						product.setCategory(category);
 						return service.save(product);
@@ -162,12 +156,8 @@ public class ProductController {
 	public Mono<String> delete(@PathVariable String id) {
 		return service.findById(id)
 				.defaultIfEmpty(new Product())
+				.flatMap(product -> isProductIdNull(product, "No existe el producto a eliminar"))
 				.flatMap(product -> {
-					if (product.getId() == null) {
-						return Mono.error(new InterruptedException("No existe el producto a eliminar"));
-					}
-					return Mono.just(product);
-				}).flatMap(product -> {
 					logger.info("Eliminando producto Id: " + product.getId());
 					logger.info("Eliminando producto: " + product.getName());
 					return service.delete(product);
@@ -199,6 +189,13 @@ public class ProductController {
 		model.addAttribute("products", products);
 		model.addAttribute("title", "Listado de productos");
 		return "list-chunked";
+	}
+	
+	public Mono<Product> isProductIdNull(Product product, String message) {
+		if (product.getId() == null) {
+			return Mono.error(new InterruptedException(message));
+		}
+		return Mono.just(product);
 	}
 
 	protected Resource getResource(Path path) throws MalformedURLException {
