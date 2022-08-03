@@ -2,15 +2,14 @@ package com.bolsadeideas.springboot.webflux.app.models.dao;
 
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-
-import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
-
 import reactor.core.publisher.Mono;
 
-public interface ProductoDao extends ReactiveMongoRepository<Producto, String>{
+import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
 
-	 public Mono<Producto> findByNombre(String nombre);
+public interface ProductDao extends ReactiveMongoRepository<Product, String>{
+
+	 public Mono<Product> findByName(String name);
 	 
 	 @Query("{ 'nombre': ?0 }")
-	 public Mono<Producto> obtenerPorNombre(String nombre);
+	 public Mono<Product> getByName(String name);
 }

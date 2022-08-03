@@ -3,7 +3,6 @@ package com.bolsadeideas.springboot.webflux.app;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -15,13 +14,12 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import com.bolsadeideas.springboot.webflux.app.models.documents.Categoria;
-import com.bolsadeideas.springboot.webflux.app.models.documents.Producto;
-import com.bolsadeideas.springboot.webflux.app.models.services.ProductoService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import reactor.core.publisher.Mono;
+
+import com.bolsadeideas.springboot.webflux.app.models.documents.Category;
+import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
+import com.bolsadeideas.springboot.webflux.app.models.services.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureWebTestClient
 @RunWith(SpringRunner.class)
@@ -32,7 +30,7 @@ class SpringBootWebfluxApirestApplicationTests {
 	private WebTestClient client;
 	
 	@Autowired
-	private ProductoService service;
+	private ProductService service;
 	
 	@Value("${config.base.endpoint}")
 	private String url;
@@ -46,22 +44,22 @@ class SpringBootWebfluxApirestApplicationTests {
 		.exchange()
 		.expectStatus().isOk()
 		.expectHeader().contentType(MediaType.APPLICATION_JSON)
-		.expectBodyList(Producto.class)
+		.expectBodyList(Product.class)
 		.consumeWith(response -> {
-			List<Producto> productos = response.getResponseBody();
-			productos.forEach(producto -> {
-				System.out.println(producto.getNombre());
+			List<Product> products = response.getResponseBody();
+			products.forEach(product -> {
+				System.out.println(product.getName());
 			});
-			Assertions.assertThat(productos.size() > 0).isTrue();
+			Assertions.assertThat(products.size() > 0).isTrue();
 		});
 	}
 
 	@Test
 	public void verTest() {
-		Producto producto = service.findByNombre("TV Panasonic Pantalla LCD").block();
+		Product product = service.findByName("TV Panasonic Pantalla LCD").block();
 		
 		client.get()
-		.uri(url + "/{id}", Collections.singletonMap("id", producto.getId()))
+		.uri(url + "/{id}", Collections.singletonMap("id", product.getId()))
 		.accept(MediaType.APPLICATION_JSON)
 		.exchange()
 		.expectStatus().isOk()
@@ -72,34 +70,34 @@ class SpringBootWebfluxApirestApplicationTests {
 
 	@Test
 	public void ver2Test() {
-		Producto producto = service.findByNombre("TV Panasonic Pantalla LCD").block();
+		Product product = service.findByName("TV Panasonic Pantalla LCD").block();
 		
 		client.get()
-		.uri(url + "/{id}", Collections.singletonMap("id", producto.getId()))
+		.uri(url + "/{id}", Collections.singletonMap("id", product.getId()))
 		.accept(MediaType.APPLICATION_JSON)
 		.exchange()
 		.expectStatus().isOk()
 		.expectHeader().contentType(MediaType.APPLICATION_JSON)
-		.expectBody(Producto.class)
+		.expectBody(Product.class)
 		.consumeWith(response -> {
-			Producto product = response.getResponseBody();
+			Product productResponse = response.getResponseBody();
 			
-			Assertions.assertThat(product.getId()).isNotEmpty();
-			Assertions.assertThat(product.getId().length() > 0).isTrue();
-			Assertions.assertThat(product.getNombre()).isEqualTo("TV Panasonic Pantalla LCD");
+			Assertions.assertThat(productResponse.getId()).isNotEmpty();
+			Assertions.assertThat(productResponse.getId().length() > 0).isTrue();
+			Assertions.assertThat(productResponse.getName()).isEqualTo("TV Panasonic Pantalla LCD");
 		});
 	}
 	
 	@Test
 	public void crearTest() {
-		Categoria categoria = service.findCategoriaByNombre("Muebles").block();
-		Producto producto = new Producto("Mesa comedor", 100.00, categoria);
+		Category category = service.findCategoryByName("Muebles").block();
+		Product product = new Product("Mesa comedor", 100.00, category);
 		
 		client.post()
 		.uri(url)
 		.contentType(MediaType.APPLICATION_JSON)
 		.accept(MediaType.APPLICATION_JSON)
-		.body(Mono.just(producto), Producto.class)
+		.body(Mono.just(product), Product.class)
 		.exchange()
 		.expectStatus().isCreated()
 		.expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -110,38 +108,38 @@ class SpringBootWebfluxApirestApplicationTests {
 	
 	@Test
 	public void crear2Test() {
-		Categoria categoria = service.findCategoriaByNombre("Muebles").block();
-		Producto producto = new Producto("Mesa comedor", 100.00, categoria);
+		Category category = service.findCategoryByName("Muebles").block();
+		Product product = new Product("Mesa comedor", 100.00, category);
 		
 		client.post()
 		.uri(url)
 		.contentType(MediaType.APPLICATION_JSON)
 		.accept(MediaType.APPLICATION_JSON)
-		.body(Mono.just(producto), Producto.class)
+		.body(Mono.just(product), Product.class)
 		.exchange()
 		.expectStatus().isCreated()
 		.expectHeader().contentType(MediaType.APPLICATION_JSON)
 		.expectBody(new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {})
 		.consumeWith(response -> {
 			Object object = response.getResponseBody().get("producto");
-			Producto product = new ObjectMapper().convertValue(object, Producto.class);
-			Assertions.assertThat(product.getId()).isNotEmpty();
-			Assertions.assertThat(product.getNombre()).isEqualTo("Mesa comedor");
-			Assertions.assertThat(product.getCategoria().getNombre()).isNotEmpty();
+			Product productConverted = new ObjectMapper().convertValue(object, Product.class);
+			Assertions.assertThat(productConverted.getId()).isNotEmpty();
+			Assertions.assertThat(productConverted.getName()).isEqualTo("Mesa comedor");
+			Assertions.assertThat(productConverted.getCategory().getName()).isNotEmpty();
 		});
 	}
 	
 	@Test
 	public void editarTest() {
-		Producto producto = service.findByNombre("Sony Notebook").block();
-		Categoria categoria = service.findCategoriaByNombre("Electrónico").block();
-		Producto productoEdit = new Producto("Asus Notebook", 700.00, categoria);
+		Product product = service.findByName("Sony Notebook").block();
+		Category category = service.findCategoryByName("Electrónico").block();
+		Product productEdit = new Product("Asus Notebook", 700.00, category);
 		
 		client.put()
-		.uri(url + "/{id}", Collections.singletonMap("id", producto.getId()))
+		.uri(url + "/{id}", Collections.singletonMap("id", product.getId()))
 		.contentType(MediaType.APPLICATION_JSON)
 		.accept(MediaType.APPLICATION_JSON)
-		.body(Mono.just(productoEdit), Producto.class)
+		.body(Mono.just(productEdit), Product.class)
 		.exchange()
 		.expectStatus().isCreated()
 		.expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -152,16 +150,16 @@ class SpringBootWebfluxApirestApplicationTests {
 	
 	@Test
 	public void eliminarTest() {
-		Producto producto = service.findByNombre("Mica Cómoda 5 Cajones").block();
+		Product product = service.findByName("Mica Cómoda 5 Cajones").block();
 		
 		client.delete()
-		.uri(url + "/{id}", Collections.singletonMap("id", producto.getId()))
+		.uri(url + "/{id}", Collections.singletonMap("id", product.getId()))
 		.exchange()
 		.expectStatus().isNoContent()
 		.expectBody().isEmpty();
 		
 		client.get()
-		.uri(url + "/{id}", Collections.singletonMap("id", producto.getId()))
+		.uri(url + "/{id}", Collections.singletonMap("id", product.getId()))
 		.exchange()
 		.expectStatus().isNotFound()
 		.expectBody().isEmpty();
