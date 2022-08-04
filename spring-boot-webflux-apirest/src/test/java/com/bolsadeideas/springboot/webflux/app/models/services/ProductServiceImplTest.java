@@ -159,4 +159,32 @@ public class ProductServiceImplTest {
 
 		verify(categoryDao).save(category);
 	}
+
+	@Test
+	public void findByNameWhenIsInvokedThenMustFindProductByNameAndReturnItTest() {
+		Product product = new Product();
+		String name = "Sony Notebook";
+		doReturn(Mono.just(product)).when(productDao).getByName(name);
+
+		StepVerifier.create(productService.findByName(name))
+		.expectNext(product)
+		.expectComplete()
+		.verify();
+
+		verify(productDao).getByName(name);
+	}
+
+	@Test
+	public void findCategoryByNameWhenIsInvokedThenMustFindCategoryByNameAndReturnItTest() {
+		Category category = new Category();
+		String name = "Deporte";
+		doReturn(Mono.just(category)).when(categoryDao).findByName(name);
+
+		StepVerifier.create(productService.findCategoryByName(name))
+		.expectNext(category)
+		.expectComplete()
+		.verify();
+
+		verify(categoryDao).findByName(name);
+	}
 }
