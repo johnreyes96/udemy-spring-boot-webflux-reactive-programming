@@ -2,6 +2,8 @@ package com.bolsadeideas.springboot.webflux.app.controllers;
 
 import java.io.File;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +51,7 @@ public class ProductController {
 				.replace(" ", "")
 				.replace(":", "")
 				.replace("\\", ""));
-		return file.transferTo(new File(path + product.getPhoto()))
+		return file.transferTo(new File(getUploadPath() + "\\" + product.getPhoto()))
 				.then(service.save(product))
 				.map(productPersisted -> ResponseEntity
 						.created(URI.create("/api/productos/".concat(productPersisted.getId())))
@@ -64,7 +66,7 @@ public class ProductController {
 							.replace(" ", "")
 							.replace(":", "")
 							.replace("\\", ""));
-			return file.transferTo(new File(path + product.getPhoto())).then(service.save(product));
+			return file.transferTo(new File(getUploadPath() + "\\" + product.getPhoto())).then(service.save(product));
 		}).map(product -> ResponseEntity.ok(product))
 		.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
@@ -132,5 +134,13 @@ public class ProductController {
 					return service.delete(product)
 							.then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
 				}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
+	}
+
+	protected String getUploadPath() {
+		return new File(getPath().toUri()).getAbsolutePath();
+	}
+
+	protected Path getPath() {
+		return Paths.get(path);
 	}
 }
