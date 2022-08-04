@@ -20,7 +20,7 @@ public interface ProductService {
 	
 	public Mono<Void> delete(Product product);
 	
-	public Flux<Category> findAllCategory();
+	public Flux<Category> findAllCategories();
 	
 	public Mono<Category> findCategoryById(String id);
 	

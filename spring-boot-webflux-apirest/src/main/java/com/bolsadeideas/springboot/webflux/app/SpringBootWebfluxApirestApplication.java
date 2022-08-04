@@ -46,13 +46,15 @@ public class SpringBootWebfluxApirestApplication implements CommandLineRunner {
 		Flux.just(electronic, sport, computing, furniture).flatMap(service::saveCategory)
 				.doOnNext(this::printCategoryCreated)
 				.thenMany(Flux.just(new Product("TV Panasonic Pantalla LCD", 456.89, electronic),
-						new Product("Sony Camara HD Digital", 177.89, electronic),
-						new Product("Apple iPod", 46.89, electronic), new Product("Sony Notebook", 846.89, computing),
-						new Product("Hewlett Packard Multifuncional", 200.89, computing),
-						new Product("Bianchi Bicicleta", 70.89, sport),
-						new Product("HP Notebook Omen 17", 2500.89, computing),
-						new Product("Mica Cómoda 5 Cajones", 150.89, furniture),
-						new Product("TV Sony Bravia OLED 4K Ultra HD", 2255.89, electronic)).flatMap(product -> {
+							new Product("Sony Camara HD Digital", 177.89, electronic),
+							new Product("Apple iPod", 46.89, electronic),
+							new Product("Sony Notebook", 846.89, computing),
+							new Product("Hewlett Packard Multifuncional", 200.89, computing),
+							new Product("Bianchi Bicicleta", 70.89, sport),
+							new Product("HP Notebook Omen 17", 2500.89, computing),
+							new Product("Mica Cómoda 5 Cajones", 150.89, furniture),
+							new Product("TV Sony Bravia OLED 4K Ultra HD", 2255.89, electronic)
+						).flatMap(product -> {
 							product.setCreateAt(new Date());
 							return service.save(product);
 						}))

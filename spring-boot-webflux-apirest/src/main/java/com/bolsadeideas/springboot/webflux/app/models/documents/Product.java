@@ -41,6 +41,11 @@ public class Product {
 		this.category = category;
 	}
 	
+	public Product setNameToUpperCase() {
+		this.setName(this.getName().toUpperCase());
+		return this;
+	}
+	
 	public String getId() {
 		return id;
 	}

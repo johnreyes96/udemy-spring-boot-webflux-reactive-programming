@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
 
-public interface ProductDao extends ReactiveMongoRepository<Product, String>{
+public interface IProductDao extends ReactiveMongoRepository<Product, String> {
 
 	 public Mono<Product> findByName(String name);
 	 

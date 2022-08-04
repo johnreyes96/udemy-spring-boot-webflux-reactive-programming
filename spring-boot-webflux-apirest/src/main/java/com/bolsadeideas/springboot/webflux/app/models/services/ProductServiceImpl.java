@@ -5,46 +5,43 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import com.bolsadeideas.springboot.webflux.app.models.dao.CategoryDao;
-import com.bolsadeideas.springboot.webflux.app.models.dao.ProductDao;
+import com.bolsadeideas.springboot.webflux.app.models.dao.ICategoryDao;
+import com.bolsadeideas.springboot.webflux.app.models.dao.IProductDao;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Category;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
 
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
 	@Autowired
-	private ProductDao dao;
+	private IProductDao productDao;
 	
 	@Autowired
-	private CategoryDao categoryDao;
+	private ICategoryDao categoryDao;
 	
 	@Override
 	public Flux<Product> findAll() {
-		return dao.findAll();
+		return productDao.findAll();
 	}
 
 	@Override
 	public Mono<Product> findById(String id) {
-		return dao.findById(id);
+		return productDao.findById(id);
 	}
 
 	@Override
 	public Mono<Product> save(Product product) {
-		return dao.save(product);
+		return productDao.save(product);
 	}
 
 	@Override
 	public Mono<Void> delete(Product product) {
-		return dao.delete(product);
+		return productDao.delete(product);
 	}
 
 	@Override
 	public Flux<Product> findAllWithNameUpperCase() {
-		return dao.findAll().map(product -> {
-			product.setName(product.getName().toUpperCase());
-			return product;
-		});
+		return productDao.findAll().map(Product::setNameToUpperCase);
 	}
 
 	@Override
@@ -53,7 +50,7 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public Flux<Category> findAllCategory() {
+	public Flux<Category> findAllCategories() {
 		return categoryDao.findAll();
 	}
 
@@ -69,7 +66,7 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public Mono<Product> findByName(String name) {
-		return dao.getByName(name);
+		return productDao.getByName(name);
 	}
 
 	@Override
