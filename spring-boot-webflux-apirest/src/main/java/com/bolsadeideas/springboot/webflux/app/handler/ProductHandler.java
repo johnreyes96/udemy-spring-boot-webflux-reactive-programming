@@ -45,14 +45,10 @@ public class ProductHandler {
 			return new Product(name.value(), Double.parseDouble(price.value()), category);
 		});
 
-		return request.multipartData()
-				.map(multipart -> multipart.toSingleValueMap().get("file"))
+		return request.multipartData().map(multipart -> multipart.toSingleValueMap().get("file"))
 				.cast(FilePart.class)
 				.flatMap(file -> productMono.flatMap(product -> {
-					product.setPhoto(UUID.randomUUID().toString() + "-" + file.filename()
-							.replace(" ", "-")
-							.replace(":", "")
-							.replace("\\", ""));
+					product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
 					product.setCreateAt(new Date());
 					return file.transferTo(new File(path + product.getPhoto()))
 							.then(service.save(product));
@@ -63,14 +59,10 @@ public class ProductHandler {
 
 	public Mono<ServerResponse> upload(ServerRequest request) {
 		String id = request.pathVariable("id");
-		return request.multipartData()
-				.map(multipart -> multipart.toSingleValueMap().get("file"))
+		return request.multipartData().map(multipart -> multipart.toSingleValueMap().get("file"))
 				.cast(FilePart.class)
 				.flatMap(file -> service.findById(id).flatMap(product -> {
-					product.setPhoto(UUID.randomUUID().toString() + "-" + file.filename()
-							.replace(" ", "-")
-							.replace(":", "")
-							.replace("\\", ""));
+					product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
 					return file.transferTo(new File(path + product.getPhoto()))
 							.then(service.save(product));
 				}))
@@ -88,10 +80,9 @@ public class ProductHandler {
 
 	public Mono<ServerResponse> ver(ServerRequest request) {
 		String id = request.pathVariable("id");
-		return service.findById(id)
-				.flatMap(producto -> ServerResponse.ok()
-						.contentType(MediaType.APPLICATION_JSON)
-						.bodyValue(producto)
+		return service.findById(id).flatMap(producto -> ServerResponse.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(producto)
 				.switchIfEmpty(ServerResponse.notFound().build()));
 	}
 

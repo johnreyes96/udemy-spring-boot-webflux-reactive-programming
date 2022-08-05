@@ -46,6 +46,19 @@ public class Product {
 		return this;
 	}
 	
+	public void setPhotoWithFormattedName(String format, String name) {
+		if (format == null)
+			format = "";
+		
+		if (name == null)
+			name = "";
+		
+		this.setPhoto(format + "-" + name
+				.replace(" ", "")
+				.replace(":", "")
+				.replace("\\", ""));
+	}
+	
 	public String getId() {
 		return id;
 	}

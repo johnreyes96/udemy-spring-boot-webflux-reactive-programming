@@ -47,10 +47,7 @@ public class ProductController {
 			product.setCreateAt(new Date());
 		}
 
-		product.setPhoto(UUID.randomUUID().toString() + "-" + file.filename()
-				.replace(" ", "")
-				.replace(":", "")
-				.replace("\\", ""));
+		product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
 		return file.transferTo(new File(getUploadPath() + "\\" + product.getPhoto()))
 				.then(service.save(product))
 				.map(productPersisted -> ResponseEntity
@@ -62,24 +59,26 @@ public class ProductController {
 	public Mono<ResponseEntity<Product>> upload(@PathVariable String id, @RequestPart FilePart file) {
 		return service.findById(id)
 				.flatMap(product -> {
-					product.setPhoto(UUID.randomUUID().toString() + "-" + file.filename()
-							.replace(" ", "")
-							.replace(":", "")
-							.replace("\\", ""));
-			return file.transferTo(new File(getUploadPath() + "\\" + product.getPhoto())).then(service.save(product));
-		}).map(product -> ResponseEntity.ok(product))
-		.defaultIfEmpty(ResponseEntity.notFound().build());
+					product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
+					return file.transferTo(new File(getUploadPath() + "\\" + product.getPhoto()))
+							.then(service.save(product));
+				}).map(product -> ResponseEntity.ok(product))
+				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
 	@GetMapping
 	public Mono<ResponseEntity<Flux<Product>>> lista() {
-		return Mono.just(ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(service.findAll()));
+		return Mono.just(ResponseEntity.ok()
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(service.findAll()));
 	}
 
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<Product>> ver(@PathVariable String id) {
 		return service.findById(id)
-				.map(product -> ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(product))
+				.map(product -> ResponseEntity.ok()
+						.contentType(MediaType.APPLICATION_JSON)
+						.body(product))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 

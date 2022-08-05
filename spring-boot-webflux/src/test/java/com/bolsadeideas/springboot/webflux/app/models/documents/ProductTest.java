@@ -4,10 +4,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ProductTest {
+public class ProductTest {
 	
 	Product product;
-
 
 	@BeforeEach
 	void init() {
@@ -22,5 +21,4 @@ class ProductTest {
 		
 		Assert.assertEquals("SONY NOTEBOOK", productResult.getName());
 	}
-
 }
