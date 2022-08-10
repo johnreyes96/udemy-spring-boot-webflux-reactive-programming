@@ -45,7 +45,8 @@ public class ProductHandler {
 			return new Product(name.value(), Double.parseDouble(price.value()), category);
 		});
 
-		return request.multipartData().map(multipart -> multipart.toSingleValueMap().get("file"))
+		return request.multipartData()
+				.map(multipart -> multipart.toSingleValueMap().get("file"))
 				.cast(FilePart.class)
 				.flatMap(file -> productMono.flatMap(product -> {
 					product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
@@ -59,7 +60,8 @@ public class ProductHandler {
 
 	public Mono<ServerResponse> upload(ServerRequest request) {
 		String id = request.pathVariable("id");
-		return request.multipartData().map(multipart -> multipart.toSingleValueMap().get("file"))
+		return request.multipartData()
+				.map(multipart -> multipart.toSingleValueMap().get("file"))
 				.cast(FilePart.class)
 				.flatMap(file -> service.findById(id).flatMap(product -> {
 					product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
@@ -95,11 +97,12 @@ public class ProductHandler {
 				return Flux.fromIterable(errors.getFieldErrors())
 						.map(fieldError -> "El campo " + fieldError.getField() + " " + fieldError.getDefaultMessage())
 						.collectList()
-						.flatMap(list -> ServerResponse.badRequest().bodyValue(list));
+						.flatMap(list -> ServerResponse.badRequest()
+								.bodyValue(list));
 			} else {
-				if (product.getCreateAt() == null) {
+				if (product.getCreateAt() == null)
 					product.setCreateAt(new Date());
-				}
+				
 				return service.save(product)
 						.flatMap(productPersisted -> ServerResponse
 								.created(URI.create("/api/v2/productos/".concat(productPersisted.getId())))

@@ -43,12 +43,11 @@ public class ProductController {
 
 	@PostMapping("/v2")
 	public Mono<ResponseEntity<Product>> crearConFoto(Product product, @RequestPart FilePart file) {
-		if (product.getCreateAt() == null) {
+		if (product.getCreateAt() == null)
 			product.setCreateAt(new Date());
-		}
 
 		product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
-		return file.transferTo(new File(getUploadPath() + "\\" + product.getPhoto()))
+		return file.transferTo(new File(path + product.getPhoto()))
 				.then(service.save(product))
 				.map(productPersisted -> ResponseEntity
 						.created(URI.create("/api/productos/".concat(productPersisted.getId())))
@@ -60,7 +59,7 @@ public class ProductController {
 		return service.findById(id)
 				.flatMap(product -> {
 					product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
-					return file.transferTo(new File(getUploadPath() + "\\" + product.getPhoto()))
+					return file.transferTo(new File(path + product.getPhoto()))
 							.then(service.save(product));
 				}).map(product -> ResponseEntity.ok(product))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
@@ -86,9 +85,8 @@ public class ProductController {
 	public Mono<ResponseEntity<Map<String, Object>>> crear(@Valid @RequestBody Mono<Product> monoProducto) {
 		Map<String, Object> response = new HashMap<>();
 		return monoProducto.flatMap(product -> {
-			if (product.getCreateAt() == null) {
+			if (product.getCreateAt() == null)
 				product.setCreateAt(new Date());
-			}
 
 			return service.save(product)
 					.map(productPersisted -> {
@@ -100,7 +98,8 @@ public class ProductController {
 					});
 		}).onErrorResume(throwable -> {
 			return Mono.just(throwable).cast(WebExchangeBindException.class)
-					.flatMap(error -> Mono.just(error.getFieldErrors())).flatMapMany(Flux::fromIterable)
+					.flatMap(error -> Mono.just(error.getFieldErrors()))
+					.flatMapMany(Flux::fromIterable)
 					.map(fieldError -> "El campo " + fieldError.getField() + " " + fieldError.getDefaultMessage())
 					.collectList()
 					.flatMap(list -> {
@@ -133,10 +132,6 @@ public class ProductController {
 					return service.delete(product)
 							.then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
 				}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
-	}
-
-	protected String getUploadPath() {
-		return new File(getPath().toUri()).getAbsolutePath();
 	}
 
 	protected Path getPath() {
