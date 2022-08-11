@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import com.bolsadeideas.springboot.webflux.app.constants.RouteEnum;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Category;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
 import com.bolsadeideas.springboot.webflux.app.models.services.ProductService;
@@ -53,7 +54,8 @@ public class ProductHandler {
 					product.setCreateAt(new Date());
 					return file.transferTo(new File(path + product.getPhoto()))
 							.then(service.save(product));
-				})).flatMap(product -> ServerResponse.created(URI.create("/api/v2/productos/".concat(product.getId())))
+				})).flatMap(product -> ServerResponse
+						.created(URI.create(RouteEnum.API_V2_PRODUCTS.getRoute().concat(product.getId())))
 						.contentType(MediaType.APPLICATION_JSON)
 						.bodyValue(product));
 	}
@@ -68,7 +70,8 @@ public class ProductHandler {
 					return file.transferTo(new File(path + product.getPhoto()))
 							.then(service.save(product));
 				}))
-				.flatMap(product -> ServerResponse.created(URI.create("/api/v2/productos/".concat(product.getId())))
+				.flatMap(product -> ServerResponse
+						.created(URI.create(RouteEnum.API_V2_PRODUCTS.getRoute().concat(product.getId())))
 						.contentType(MediaType.APPLICATION_JSON)
 						.bodyValue(product))
 				.switchIfEmpty(ServerResponse.notFound().build());
@@ -105,7 +108,8 @@ public class ProductHandler {
 				
 				return service.save(product)
 						.flatMap(productPersisted -> ServerResponse
-								.created(URI.create("/api/v2/productos/".concat(productPersisted.getId())))
+								.created(URI.create(RouteEnum.API_V2_PRODUCTS.getRoute()
+										.concat(productPersisted.getId())))
 								.contentType(MediaType.APPLICATION_JSON)
 								.bodyValue(productPersisted));
 			}
@@ -122,7 +126,8 @@ public class ProductHandler {
 			productPersisted.setPrice(productRequest.getPrice());
 			productPersisted.setCategory(productRequest.getCategory());
 			return productPersisted;
-		}).flatMap(product -> ServerResponse.created(URI.create("/api/v2/productos/".concat(product.getId())))
+		}).flatMap(product -> ServerResponse
+				.created(URI.create(RouteEnum.API_V2_PRODUCTS.getRoute().concat(product.getId())))
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(service.save(product), Product.class))
 		.switchIfEmpty(ServerResponse.notFound().build());

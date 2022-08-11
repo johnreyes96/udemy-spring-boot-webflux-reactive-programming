@@ -28,6 +28,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import com.bolsadeideas.springboot.webflux.app.constants.RouteEnum;
 import com.bolsadeideas.springboot.webflux.app.models.documents.Product;
 import com.bolsadeideas.springboot.webflux.app.models.services.ProductService;
 
@@ -50,8 +51,9 @@ public class ProductController {
 		return file.transferTo(new File(path + product.getPhoto()))
 				.then(service.save(product))
 				.map(productPersisted -> ResponseEntity
-						.created(URI.create("/api/productos/".concat(productPersisted.getId())))
-						.contentType(MediaType.APPLICATION_JSON).body(productPersisted));
+						.created(URI.create(RouteEnum.API_PRODUCTS.getRoute().concat(productPersisted.getId())))
+						.contentType(MediaType.APPLICATION_JSON)
+						.body(productPersisted));
 	}
 
 	@PostMapping("/upload/{id}")
@@ -93,8 +95,11 @@ public class ProductController {
 						response.put("producto", productPersisted);
 						response.put("mensaje", "Producto creado con éxito");
 						response.put("timestamp", new Date());
-						return ResponseEntity.created(URI.create("/api/productos/".concat(productPersisted.getId())))
-								.contentType(MediaType.APPLICATION_JSON).body(response);
+						return ResponseEntity
+								.created(URI.create(RouteEnum.API_PRODUCTS.getRoute()
+										.concat(productPersisted.getId())))
+								.contentType(MediaType.APPLICATION_JSON)
+								.body(response);
 					});
 		}).onErrorResume(throwable -> {
 			return Mono.just(throwable).cast(WebExchangeBindException.class)
@@ -120,8 +125,9 @@ public class ProductController {
 					productPersisted.setCategory(product.getCategory());
 					return service.save(productPersisted);
 				}).map(productPersisted -> ResponseEntity
-						.created(URI.create("/api/productos/".concat(productPersisted.getId())))
-						.contentType(MediaType.APPLICATION_JSON).body(productPersisted))
+						.created(URI.create(RouteEnum.API_PRODUCTS.getRoute().concat(productPersisted.getId())))
+						.contentType(MediaType.APPLICATION_JSON)
+						.body(productPersisted))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
