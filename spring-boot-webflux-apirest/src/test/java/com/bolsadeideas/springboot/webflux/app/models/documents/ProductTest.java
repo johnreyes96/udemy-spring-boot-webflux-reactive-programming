@@ -1,8 +1,9 @@
 package com.bolsadeideas.springboot.webflux.app.models.documents;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ProductTest {
 	
@@ -19,7 +20,7 @@ public class ProductTest {
 		
 		Product productResult = product.setNameToUpperCase();
 		
-		Assert.assertEquals("SONY NOTEBOOK", productResult.getName());
+		assertEquals("SONY NOTEBOOK", productResult.getName());
 	}
 
 	@Test
@@ -27,7 +28,7 @@ public class ProductTest {
 		
 		product.setPhotoWithFormattedName(null, null);
 		
-		Assert.assertEquals("-", product.getPhoto());
+		assertEquals("-", product.getPhoto());
 	}
 
 	@Test
@@ -37,7 +38,7 @@ public class ProductTest {
 		
 		product.setPhotoWithFormattedName(format, name);
 		
-		Assert.assertEquals("-", product.getPhoto());
+		assertEquals("-", product.getPhoto());
 	}
 
 	@Test
@@ -47,7 +48,7 @@ public class ProductTest {
 		
 		product.setPhotoWithFormattedName(format, name);
 		
-		Assert.assertEquals("uuid-nameofaphoto", product.getPhoto());
+		assertEquals("uuid-nameofaphoto", product.getPhoto());
 	}
 
 	@Test
@@ -57,7 +58,7 @@ public class ProductTest {
 		
 		product.setPhotoWithFormattedName(format, name);
 		
-		Assert.assertEquals("uuid-namephoto", product.getPhoto());
+		assertEquals("uuid-namephoto", product.getPhoto());
 	}
 
 	@Test
@@ -67,7 +68,7 @@ public class ProductTest {
 		
 		product.setPhotoWithFormattedName(format, name);
 		
-		Assert.assertEquals("uuid-namephoto", product.getPhoto());
+		assertEquals("uuid-namephoto", product.getPhoto());
 	}
 
 	@Test
@@ -77,7 +78,7 @@ public class ProductTest {
 		
 		product.setPhotoWithFormattedName(format, name);
 		
-		Assert.assertEquals("uuid-motorbike", product.getPhoto());
+		assertEquals("uuid-motorbike", product.getPhoto());
 	}
 
 	@Test
@@ -87,6 +88,6 @@ public class ProductTest {
 		
 		product.setPhotoWithFormattedName(format, name);
 		
-		Assert.assertEquals("uuid-namenamephoto", product.getPhoto());
+		assertEquals("uuid-namenamephoto", product.getPhoto());
 	}
 }

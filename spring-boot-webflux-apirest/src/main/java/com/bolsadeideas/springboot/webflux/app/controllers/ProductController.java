@@ -37,19 +37,19 @@ import com.bolsadeideas.springboot.webflux.app.models.services.ProductService;
 public class ProductController {
 
 	@Autowired
-	private ProductService service;
+	private ProductService productService;
 
 	@Value("${config.uploads.path}")
 	private String path;
 
 	@PostMapping("/v2")
-	public Mono<ResponseEntity<Product>> crearConFoto(Product product, @RequestPart FilePart file) {
+	public Mono<ResponseEntity<Product>> createWithPhoto(Product product, @RequestPart FilePart file) {
 		if (product.getCreateAt() == null)
 			product.setCreateAt(new Date());
 
 		product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
 		return file.transferTo(new File(path + product.getPhoto()))
-				.then(service.save(product))
+				.then(productService.save(product))
 				.map(productPersisted -> ResponseEntity
 						.created(URI.create(RouteEnum.API_PRODUCTS.getRoute().concat(productPersisted.getId())))
 						.contentType(MediaType.APPLICATION_JSON)
@@ -58,11 +58,11 @@ public class ProductController {
 
 	@PostMapping("/upload/{id}")
 	public Mono<ResponseEntity<Product>> upload(@PathVariable String id, @RequestPart FilePart file) {
-		return service.findById(id)
+		return productService.findById(id)
 				.flatMap(product -> {
 					product.setPhotoWithFormattedName(UUID.randomUUID().toString(), file.filename());
 					return file.transferTo(new File(path + product.getPhoto()))
-							.then(service.save(product));
+							.then(productService.save(product));
 				}).map(product -> ResponseEntity.ok(product))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
@@ -71,12 +71,12 @@ public class ProductController {
 	public Mono<ResponseEntity<Flux<Product>>> lista() {
 		return Mono.just(ResponseEntity.ok()
 				.contentType(MediaType.APPLICATION_JSON)
-				.body(service.findAll()));
+				.body(productService.findAll()));
 	}
 
 	@GetMapping("/{id}")
 	public Mono<ResponseEntity<Product>> ver(@PathVariable String id) {
-		return service.findById(id)
+		return productService.findById(id)
 				.map(product -> ResponseEntity.ok()
 						.contentType(MediaType.APPLICATION_JSON)
 						.body(product))
@@ -90,7 +90,7 @@ public class ProductController {
 			if (product.getCreateAt() == null)
 				product.setCreateAt(new Date());
 
-			return service.save(product)
+			return productService.save(product)
 					.map(productPersisted -> {
 						response.put("producto", productPersisted);
 						response.put("mensaje", "Producto creado con éxito");
@@ -118,12 +118,12 @@ public class ProductController {
 
 	@PutMapping("/{id}")
 	public Mono<ResponseEntity<Product>> editar(@RequestBody Product product, @PathVariable String id) {
-		return service.findById(id)
+		return productService.findById(id)
 				.flatMap(productPersisted -> {
 					productPersisted.setName(product.getName());
 					productPersisted.setPrice(product.getPrice());
 					productPersisted.setCategory(product.getCategory());
-					return service.save(productPersisted);
+					return productService.save(productPersisted);
 				}).map(productPersisted -> ResponseEntity
 						.created(URI.create(RouteEnum.API_PRODUCTS.getRoute().concat(productPersisted.getId())))
 						.contentType(MediaType.APPLICATION_JSON)
@@ -133,9 +133,9 @@ public class ProductController {
 
 	@DeleteMapping("/{id}")
 	public Mono<ResponseEntity<Void>> eliminar(@PathVariable String id) {
-		return service.findById(id)
+		return productService.findById(id)
 				.flatMap(product -> {
-					return service.delete(product)
+					return productService.delete(product)
 							.then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
 				}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
 	}
