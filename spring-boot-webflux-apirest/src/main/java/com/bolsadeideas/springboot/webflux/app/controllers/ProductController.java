@@ -68,14 +68,14 @@ public class ProductController {
 	}
 
 	@GetMapping
-	public Mono<ResponseEntity<Flux<Product>>> lista() {
+	public Mono<ResponseEntity<Flux<Product>>> list() {
 		return Mono.just(ResponseEntity.ok()
 				.contentType(MediaType.APPLICATION_JSON)
 				.body(productService.findAll()));
 	}
 
 	@GetMapping("/{id}")
-	public Mono<ResponseEntity<Product>> ver(@PathVariable String id) {
+	public Mono<ResponseEntity<Product>> view(@PathVariable String id) {
 		return productService.findById(id)
 				.map(product -> ResponseEntity.ok()
 						.contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ public class ProductController {
 	}
 
 	@PostMapping
-	public Mono<ResponseEntity<Map<String, Object>>> crear(@Valid @RequestBody Mono<Product> monoProducto) {
+	public Mono<ResponseEntity<Map<String, Object>>> create(@Valid @RequestBody Mono<Product> monoProducto) {
 		Map<String, Object> response = new HashMap<>();
 		return monoProducto.flatMap(product -> {
 			if (product.getCreateAt() == null)
@@ -92,8 +92,8 @@ public class ProductController {
 
 			return productService.save(product)
 					.map(productPersisted -> {
-						response.put("producto", productPersisted);
-						response.put("mensaje", "Producto creado con éxito");
+						response.put("product", productPersisted);
+						response.put("message", "Product created successfully");
 						response.put("timestamp", new Date());
 						return ResponseEntity
 								.created(URI.create(RouteEnum.API_PRODUCTS.getRoute()
@@ -102,22 +102,24 @@ public class ProductController {
 								.body(response);
 					});
 		}).onErrorResume(throwable -> {
-			return Mono.just(throwable).cast(WebExchangeBindException.class)
+			return Mono.just(throwable)
+					.cast(WebExchangeBindException.class)
 					.flatMap(error -> Mono.just(error.getFieldErrors()))
 					.flatMapMany(Flux::fromIterable)
-					.map(fieldError -> "El campo " + fieldError.getField() + " " + fieldError.getDefaultMessage())
+					.map(fieldError -> "The field " + fieldError.getField() + " " + fieldError.getDefaultMessage())
 					.collectList()
 					.flatMap(list -> {
 						response.put("errors", list);
 						response.put("timestamp", new Date());
 						response.put("status", HttpStatus.BAD_REQUEST.value());
-						return Mono.just(ResponseEntity.badRequest().body(response));
+						return Mono.just(ResponseEntity.badRequest()
+								.body(response));
 					});
 		});
 	}
 
 	@PutMapping("/{id}")
-	public Mono<ResponseEntity<Product>> editar(@RequestBody Product product, @PathVariable String id) {
+	public Mono<ResponseEntity<Product>> edit(@RequestBody Product product, @PathVariable String id) {
 		return productService.findById(id)
 				.flatMap(productPersisted -> {
 					productPersisted.setName(product.getName());
@@ -132,7 +134,7 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/{id}")
-	public Mono<ResponseEntity<Void>> eliminar(@PathVariable String id) {
+	public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
 		return productService.findById(id)
 				.flatMap(product -> {
 					return productService.delete(product)

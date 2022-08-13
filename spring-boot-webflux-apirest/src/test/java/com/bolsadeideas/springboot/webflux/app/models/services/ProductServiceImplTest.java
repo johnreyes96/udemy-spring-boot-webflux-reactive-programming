@@ -43,9 +43,9 @@ public class ProductServiceImplTest {
 		doReturn(Flux.just(product)).when(productDao).findAll();
 
 		StepVerifier.create(productService.findAll())
-		.expectNext(product)
-		.expectComplete()
-		.verify();
+			.expectNext(product)
+			.expectComplete()
+			.verify();
 
 		verify(productDao).findAll();
 	}
@@ -57,9 +57,9 @@ public class ProductServiceImplTest {
 		doReturn(Mono.just(product)).when(productDao).findById(id);
 
 		StepVerifier.create(productService.findById(id))
-		.expectNext(product)
-		.expectComplete()
-		.verify();
+			.expectNext(product)
+			.expectComplete()
+			.verify();
 
 		verify(productDao).findById(id);
 	}
@@ -70,9 +70,9 @@ public class ProductServiceImplTest {
 		doReturn(Mono.just(product)).when(productDao).save(product);
 
 		StepVerifier.create(productService.save(product))
-		.expectNext(product)
-		.expectComplete()
-		.verify();
+			.expectNext(product)
+			.expectComplete()
+			.verify();
 
 		verify(productDao).save(product);
 	}
@@ -83,9 +83,9 @@ public class ProductServiceImplTest {
 		doReturn(Mono.empty()).when(productDao).delete(product);
 
 		StepVerifier.create(productService.delete(product))
-		.expectNextCount(0)
-		.expectComplete()
-		.verify();
+			.expectNextCount(0)
+			.expectComplete()
+			.verify();
 
 		verify(productDao).delete(product);
 	}
@@ -99,8 +99,9 @@ public class ProductServiceImplTest {
 		doReturn(product).when(productMock).setNameToUpperCase();
 
 		StepVerifier.create(productService.findAllWithNameUpperCase())
-				.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
-				.expectComplete().verify();
+			.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
+			.expectComplete()
+			.verify();
 
 		verify(productDao).findAll();
 		verify(productMock).setNameToUpperCase();
@@ -112,10 +113,10 @@ public class ProductServiceImplTest {
 		doReturn(Flux.just(product)).when(productService).findAllWithNameUpperCase();
 
 		StepVerifier.create(productService.findAllWithNameUpperCaseRepeat())
-		.expectNext(product)
-		.expectNextCount(5)
-		.expectComplete()
-		.verify();
+			.expectNext(product)
+			.expectNextCount(5)
+			.expectComplete()
+			.verify();
 
 		verify(productService).findAllWithNameUpperCase();
 	}
@@ -126,9 +127,9 @@ public class ProductServiceImplTest {
 		doReturn(Flux.just(category)).when(categoryDao).findAll();
 
 		StepVerifier.create(productService.findAllCategories())
-		.expectNext(category)
-		.expectComplete()
-		.verify();
+			.expectNext(category)
+			.expectComplete()
+			.verify();
 
 		verify(categoryDao).findAll();
 	}
@@ -140,9 +141,9 @@ public class ProductServiceImplTest {
 		doReturn(Mono.just(category)).when(categoryDao).findById(id);
 
 		StepVerifier.create(productService.findCategoryById(id))
-		.expectNext(category)
-		.expectComplete()
-		.verify();
+			.expectNext(category)
+			.expectComplete()
+			.verify();
 
 		verify(categoryDao).findById(id);
 	}
@@ -153,9 +154,9 @@ public class ProductServiceImplTest {
 		doReturn(Mono.just(category)).when(categoryDao).save(category);
 
 		StepVerifier.create(productService.saveCategory(category))
-		.expectNext(category)
-		.expectComplete()
-		.verify();
+			.expectNext(category)
+			.expectComplete()
+			.verify();
 
 		verify(categoryDao).save(category);
 	}
@@ -167,9 +168,9 @@ public class ProductServiceImplTest {
 		doReturn(Mono.just(product)).when(productDao).getByName(name);
 
 		StepVerifier.create(productService.findByName(name))
-		.expectNext(product)
-		.expectComplete()
-		.verify();
+			.expectNext(product)
+			.expectComplete()
+			.verify();
 
 		verify(productDao).getByName(name);
 	}
@@ -181,9 +182,9 @@ public class ProductServiceImplTest {
 		doReturn(Mono.just(category)).when(categoryDao).findByName(name);
 
 		StepVerifier.create(productService.findCategoryByName(name))
-		.expectNext(category)
-		.expectComplete()
-		.verify();
+			.expectNext(category)
+			.expectComplete()
+			.verify();
 
 		verify(categoryDao).findByName(name);
 	}
