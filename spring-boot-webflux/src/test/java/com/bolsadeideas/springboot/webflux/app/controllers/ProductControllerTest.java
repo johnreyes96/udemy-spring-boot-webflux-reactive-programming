@@ -56,9 +56,9 @@ public class ProductControllerTest {
 		doReturn(Flux.empty()).when(service).findAllCategories();
 
 		StepVerifier.create(productController.categories())
-		.expectNextCount(0)
-		.expectComplete()
-		.verify();
+			.expectNextCount(0)
+			.expectComplete()
+			.verify();
 
 		verify(service).findAllCategories();
 	}
@@ -70,9 +70,9 @@ public class ProductControllerTest {
 		doReturn(Flux.just(category)).when(service).findAllCategories();
 
 		StepVerifier.create(productController.categories())
-		.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getName()))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getName()))
+			.expectComplete()
+			.verify();
 
 		verify(service).findAllCategories();
 	}
@@ -86,10 +86,10 @@ public class ProductControllerTest {
 		doReturn(Flux.just(sport, furniture)).when(service).findAllCategories();
 
 		StepVerifier.create(productController.categories())
-		.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getName()))
-		.expectNextMatches(categoryExpected -> "Muebles".equals(categoryExpected.getName()))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(categoryExpected -> "Deporte".equals(categoryExpected.getName()))
+			.expectNextMatches(categoryExpected -> "Muebles".equals(categoryExpected.getName()))
+			.expectComplete()
+			.verify();
 
 		verify(service).findAllCategories();
 	}
@@ -128,9 +128,9 @@ public class ProductControllerTest {
 		doReturn(image).when(productController).getResource(path);
 		
 		StepVerifier.create(productController.viewPhoto(photoName))
-		.expectNext(resourceExpected)
-		.expectComplete()
-		.verify();
+			.expectNext(resourceExpected)
+			.expectComplete()
+			.verify();
 
 		verify(productController).getPath();
 		verify(path).resolve(photoName);
@@ -149,9 +149,9 @@ public class ProductControllerTest {
 		doReturn(Mono.just(product)).when(productController).isProductIdNull(product, "No existe el producto");
 
 		StepVerifier.create(productController.view(model, id))
-		.expectNextMatches(expected -> "view".equals(expected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(expected -> "view".equals(expected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(model).addAttribute("product", product);
@@ -169,9 +169,10 @@ public class ProductControllerTest {
 			.isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 
 		StepVerifier.create(productController.view(model, id))
-		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto".equals(redirectExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto"
+					.equals(redirectExpected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(productController).isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
@@ -222,9 +223,9 @@ public class ProductControllerTest {
 		doReturn(model).when(model).addAttribute("button", "Crear");
 
 		StepVerifier.create(productController.create(model))
-		.expectNextMatches(expected -> "form".equals(expected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(expected -> "form".equals(expected))
+			.expectComplete()
+			.verify();
 
 		verify(model).addAttribute(Mockito.eq("product"), Mockito.any(Product.class));
 		verify(model).addAttribute("title", "Crear producto");
@@ -243,9 +244,9 @@ public class ProductControllerTest {
 		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.edit(id, model))
-		.expectNextMatches(expected -> "form".equals(expected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(expected -> "form".equals(expected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(model).addAttribute(Mockito.eq("product"), Mockito.any()); // Return MonoDefaultIfEmpty
@@ -264,9 +265,9 @@ public class ProductControllerTest {
 		doReturn(model).when(model).addAttribute("button", "Editar");
 
 		StepVerifier.create(productController.edit(id, model))
-		.expectNextMatches(expected -> "form".equals(expected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(expected -> "form".equals(expected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(model).addAttribute(Mockito.eq("product"), Mockito.any()); // Return MonoDefaultIfEmpty
@@ -287,9 +288,9 @@ public class ProductControllerTest {
 		doReturn(Mono.just(product)).when(productController).isProductIdNull(product, "No existe el producto");
 
 		StepVerifier.create(productController.editV2(id, model))
-		.expectNextMatches(expected -> "form".equals(expected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(expected -> "form".equals(expected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(model).addAttribute("product", product);
@@ -308,9 +309,10 @@ public class ProductControllerTest {
 			.isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 
 		StepVerifier.create(productController.editV2(id, model))
-		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto".equals(redirectExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto"
+					.equals(redirectExpected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(productController).isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
@@ -328,9 +330,9 @@ public class ProductControllerTest {
 		doReturn(model).when(model).addAttribute("button", "Guardar");
 		
 		StepVerifier.create(productController.save(null, result, model, null, null))
-		.expectNextMatches(expected -> "form".equals(expected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(expected -> "form".equals(expected))
+			.expectComplete()
+			.verify();
 
 		verify(result).hasErrors();
 		verify(model).addAttribute("title", "Errores en formulario producto");
@@ -359,9 +361,10 @@ public class ProductControllerTest {
 		doReturn(Mono.empty()).when(service).findCategoryById(id);
 		
 		StepVerifier.create(productController.save(product, result, model, file, status))
-		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito".equals(redirectExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito"
+					.equals(redirectExpected))
+			.expectComplete()
+			.verify();
 
 		verify(result).hasErrors();
 		verify(status).setComplete();
@@ -393,9 +396,10 @@ public class ProductControllerTest {
 		doReturn(Mono.just(product)).when(service).save(product);
 		
 		StepVerifier.create(productController.save(product, result, model, file, status))
-		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito".equals(redirectExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito"
+					.equals(redirectExpected))
+			.expectComplete()
+			.verify();
 
 		Assertions.assertNotNull(product.getCreateAt());
 		Assertions.assertTrue(dateSmaller.getTime() < product.getCreateAt().getTime());
@@ -433,9 +437,10 @@ public class ProductControllerTest {
 		doReturn("").when(productController).getUploadPath();
 		
 		StepVerifier.create(productController.save(product, result, model, file, status))
-		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito".equals(redirectExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+guardado+con+exito"
+					.equals(redirectExpected))
+			.expectComplete()
+			.verify();
 
 		Assertions.assertNotNull(product.getCreateAt());
 		Assertions.assertEquals(createAt, product.getCreateAt());
@@ -458,9 +463,10 @@ public class ProductControllerTest {
 			.isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
 		
 		StepVerifier.create(productController.delete(id))
-		.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto+a+eliminar".equals(redirectExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(redirectExpected -> "redirect:/list?error=no+existe+el+producto+a+eliminar"
+					.equals(redirectExpected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(productController).isProductIdNull(Mockito.any(Product.class), Mockito.eq(message));
@@ -478,9 +484,10 @@ public class ProductControllerTest {
 		doReturn(Mono.empty()).when(service).delete(product);
 		
 		StepVerifier.create(productController.delete(id))
-		.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+eliminado+con+exito".equals(redirectExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(redirectExpected -> "redirect:/list?success=producto+eliminado+con+exito"
+					.equals(redirectExpected))
+			.expectComplete()
+			.verify();
 
 		verify(service).findById(id);
 		verify(productController).isProductIdNull(product, "No existe el producto a eliminar");
@@ -591,9 +598,9 @@ public class ProductControllerTest {
 		product.setId(id);
 		
 		StepVerifier.create(productController.isProductIdNull(product, ""))
-		.expectNextMatches(productExpected -> product.equals(productExpected))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(productExpected -> product.equals(productExpected))
+			.expectComplete()
+			.verify();
 		
 	}
 
@@ -602,9 +609,9 @@ public class ProductControllerTest {
 		Product product = new Product();
 		
 		StepVerifier.create(productController.isProductIdNull(product, "error"))
-		.expectErrorMatches(exception -> exception instanceof InterruptedException
-				&& "error".equals(exception.getMessage()))
-		.verify();
+			.expectErrorMatches(exception -> exception instanceof InterruptedException
+					&& "error".equals(exception.getMessage()))
+			.verify();
 		
 	}
 

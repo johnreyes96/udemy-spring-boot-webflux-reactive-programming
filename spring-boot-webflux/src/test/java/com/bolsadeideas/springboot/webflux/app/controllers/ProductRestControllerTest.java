@@ -38,9 +38,9 @@ public class ProductRestControllerTest {
 		doReturn(Flux.empty()).when(productDao).findAll();
 
 		StepVerifier.create(productRestController.index())
-		.expectNextCount(0)
-		.expectComplete()
-		.verify();
+			.expectNextCount(0)
+			.expectComplete()
+			.verify();
 
 		verify(productDao).findAll();
 	}
@@ -54,9 +54,9 @@ public class ProductRestControllerTest {
 		doReturn(product).when(productMock).setNameToUpperCase();
 
 		StepVerifier.create(productRestController.index())
-		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
+			.expectComplete()
+			.verify();
 
 		verify(productDao).findAll();
 		verify(productMock).setNameToUpperCase();
@@ -75,10 +75,10 @@ public class ProductRestControllerTest {
 		doReturn(smartphone).when(smartphoneMock).setNameToUpperCase();
 
 		StepVerifier.create(productRestController.index())
-		.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
-		.expectNextMatches(productExpected -> "APPLE IPOD".equals(productExpected.getName()))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(productExpected -> "SONY NOTEBOOK".equals(productExpected.getName()))
+			.expectNextMatches(productExpected -> "APPLE IPOD".equals(productExpected.getName()))
+			.expectComplete()
+			.verify();
 
 		verify(productDao).findAll();
 		verify(laptopMock).setNameToUpperCase();
@@ -93,9 +93,9 @@ public class ProductRestControllerTest {
 		doReturn(Mono.just(product)).when(productDao).findById(id);
 
 		StepVerifier.create(productRestController.show(id))
-		.expectNextMatches(productExpected -> "62d249977dacbc5b8ab52014".equals(productExpected.getId()))
-		.expectComplete()
-		.verify();
+			.expectNextMatches(productExpected -> "62d249977dacbc5b8ab52014".equals(productExpected.getId()))
+			.expectComplete()
+			.verify();
 
 		verify(productDao).findById(id);
 	}
